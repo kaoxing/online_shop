@@ -386,33 +386,22 @@ def mgood(request):
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
+        if id is None:
+            return redirect(local + "slogin/")
         name = data.get('name')
         pwd = data.get('pwd')
-        # todo 这里通过用户id找购物车
-        car_list = [{
-            "goods_num": 'x2s',
-            "goods_name": '钩子',
-            "goods_number": '',
-            "goods_price": '123',
-            'goods_description': '很细很黑',
-            'order_address': '123',
-            'statu': '',
-            'goods_photo': '/static/img/image.jpg'
-        }, {
-            "goods_num": 'x2s',
-            "goods_name": '钩子',
-            "goods_number": '',
-            "goods_price": '123',
-            'goods_description': '很细很黑',
-            'order_address': '123',
-            'statu': '',
-            'goods_photo': '/static/img/The_second_crown.jpg'
-        }]
-        return render(request, "mgood.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(car_list)})
+        goods_list = tls.mgood_get(id)
+        return render(request, "mgood.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(goods_list)})
     data = request.body
     data = json.loads(data)
-    photo = data.get("goods_photo")
-    tls.save_photo(photo)
+    # print(data)
+    tls.mgood_post(data)
+
+    # print(data.keys())
+    # photo = data.get("goods_photo")
+    # ope = data.get()
+    # tls.save_photo(photo)
+
     # ope = data.get("ope")
     # # todo 通过ope的值确定操作类型,"地址","数量","购买"，“删除”
     # # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
