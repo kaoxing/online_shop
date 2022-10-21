@@ -14,6 +14,7 @@ def shopper_exist(id, pwd):
     sql = "select * from shopper_table where shopper_num=" + id
     cursor.execute(sql)
     rows = cursor.fetchall()
+    print(id,pwd,rows)
     if len(rows) != 0 and rows[0][2] == pwd:
         return rows[0][1]
     return None
@@ -29,7 +30,7 @@ def shop_exist(id, pwd):
     return None
 
 
-def
+# def
 
 
 def save_photo(photo):
