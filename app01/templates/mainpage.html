@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VUE</title>
+<!--    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.1/jquery.js"></script>-->
+<!--    <script src="js/jquery.js"></script>-->
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>-->
+    <!-- 引入样式 -->
+
+    <!-- 引入组件库 -->
+<!--    <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <script src="{% static '/js/vue.js'%}"></script>
+    <script src="{% static '/js/element-ui/lib/index.js'%}"></script>
+    <link rel="stylesheet" href="{% static '/js/element-ui/lib/theme-chalk/index.css'%}">
+<!--    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.css'%}" />-->
+
+    <style>
+      .el-row {
+        margin-bottom: 20px;
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+      .el-col {
+        border-radius: 4px;
+      }
+      .bg-purple-dark {
+        background: #99a9bf;
+      }
+      .bg-purple {
+        background: #d3dce6;
+      }
+      .bg-purple-light {
+        background: #e5e9f2;
+      }
+      .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+      }
+      .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+      }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2 v-text="message+'~'"></h2>
+        <p v-html="message"></p>
+        <input type="button" value="事件" @click="doIt">
+        <input type="button" value="xixi" @click="doIt">
+        <input type="button" value="shuangji" @dblclick="doIt">
+<!--        <h2 @click="changeFood">{% verbatim %} {{food}} {% endverbatim %}</h2>-->
+        <el-button @click="sub">-</el-button>
+        <span>   {% verbatim %}{{num}}{% endverbatim %}   </span>
+        <el-button @click="add">+</el-button>
+        <h1></h1>
+        <button @click="changeShow">按钮1</button>
+        <button @click="bord">按钮2</button>
+        <img v-show="isShow" src="https://www.ahu.edu.cn/_upload/tpl/03/e0/992/template992/images/logo.png" alt="" :class="{active:isActive}">
+        <!-- <el-button>默认按钮</el-button> -->
+        <hr/>
+        <form method="post" id="sss">
+            {% csrf_token %}
+            <input type="text" name="user" placeholder="用户名:" size=“medium” maxlength="10">
+            <input type="password" name="pwd" placeholder="密码:" size=“medium” maxlength="10">
+            <input type="submit" value="提交" size=“medium”>
+                {% if n == "false" %}
+                    <li>用户名或密码错误</li>
+                {% endif %}
+        </form>
+        <el-button>button</el-button>
+<!--        <input type="钩子" v-model="info">-->
+<!--        <span>{% verbatim %}{{info}}{% endverbatim %}</span>-->
+        <span>{{info}}</span>
+
+    </div>
+    <div id="row">
+    <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purple"><el-button>button</el-button></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple"><el-button>button</el-button></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple"><el-button>button</el-button></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple"><el-button>button</el-button></div></el-col>
+    </el-row>
+    </div>
+    <script>
+        let load=new FormData();
+        load.append('user','123');
+        load.append('pwd','123');
+        new Vue().$mount('#row');
+        const app = new Vue({
+            el:"#app",
+            data: {
+                message:"<a href='http://www.baidu.com'>link</a>",
+                num:1,
+                isShow:true,
+                isActive:false,
+                ds:11,
+            },
+            methods: {
+                bord:function(){
+                    this.isActive=!this.isActive;
+                },
+                doIt:function(){
+                    load.user=this.num;
+                    load.pwd=this.ds;
+                    fetch('http://localhost:8000/mainpage/', {
+                        method: 'POST',
+                        mode:'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                          },
+                        body:JSON.stringify(load)
+                    }).then(function(response) {
+
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+
+                    });
+                },
+                changeFood:function(){
+                    this.food+="好吃！"
+                    // this.changeFood();
+                },
+                add:function(){
+                    if(this.num<10){
+                        this.num++;
+                    }else{
+                        alert("最大了");
+                    }
+                },
+                sub:function(){
+                    if(this.num>0){
+                        this.num--;
+                    }else{
+                        alert("最小了");
+                    }
+                },
+                changeShow:function(){
+                    this.isShow=!this.isShow;
+                }
+            }
+        })
+    </script>
+</body>
+</html>

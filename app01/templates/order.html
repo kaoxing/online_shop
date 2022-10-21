@@ -1,0 +1,232 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="{% static '/js/vue.js'%}"></script>
+<script src="{% static '/js/element-ui/lib/index.js'%}"></script>
+<link rel="stylesheet" href="{% static '/js/element-ui/lib/theme-chalk/index.css'%}">
+<div id="app">
+    <div  style="text-align:right">
+        <span>---欢迎您：{{name}}---</span>
+        <el-button type="danger" @click="goIndex">返回主页</el-button>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <el-table
+      :data="dataTable"
+      style="width: 100%">
+      <el-table-column
+        prop="order_date"
+        label="日期"
+        width="100">
+      </el-table-column>
+      <el-table-column
+        prop="order_num"
+        label="订单编号"
+        width="120">
+      </el-table-column>
+        <el-table-column
+        prop="shop_name"
+        label="商家名"
+        width="120">
+      </el-table-column>
+        <el-table-column
+        prop="shop_num"
+        label="商家编号"
+        width="120">
+      </el-table-column>
+      <el-table-column
+        prop="goods_name"
+        label="商品名"
+        width="120">
+      </el-table-column>
+        <el-table-column
+        prop="goods_num"
+        label="商品编号"
+        width="120">
+      </el-table-column>
+        <el-table-column
+        prop="goods_number"
+        label="商品数量"
+        width="120">
+      </el-table-column>
+        <el-table-column
+        prop="goods_price"
+        label="商品单价"
+        width="120">
+      </el-table-column>
+        <el-table-column
+        prop="user_address"
+        label="地址"
+        width="360">
+      </el-table-column>
+        <el-table-column
+        prop="statu"
+        label="状态"
+        width="100">
+      </el-table-column>
+        <el-table-column label="操作" prop="action" align="center">
+          <div  slot-scope="scope">
+              <el-button type="primary" @click="showPic(scope.row)">查看图片</el-button>
+            <el-button type="primary" @click="receive(scope.$index, scope.row)">确认收货</el-button>
+              <el-button type="success" @click="setDialog(scope.$index, scope.row)">评论</el-button>
+              <el-button type="danger" @click="refunds(scope.$index, scope.row)">退货</el-button>
+          </div>
+        </el-table-column>
+    </el-table>
+    <el-dialog
+    title="评论"
+    :visible.sync="dialogVisible"
+    width="30%"
+    :show-close="show">
+    <el-input type="textarea" placeholder="评论内容:" v-model="commentInfo"></el-input>
+    <span slot="footer" class="dialog-footer">
+    <el-button @click="cancel">取 消</el-button>
+    <el-button type="primary" @click="comment">确 定</el-button>
+    </span>
+    </el-dialog>
+    <el-dialog
+    title="商品图片"
+    :visible.sync="dialogVisible3"
+    width="50%"
+    :show-close="show3">
+    <el-image
+      :src="photo_url"
+      fit="fill">
+    </el-image>
+    <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="cancel3">确 定</el-button>
+    </span>
+    </el-dialog>
+</div>
+<script>
+    let table={{ List|safe }};
+    let load={
+        order_num:"",
+        goods_num:"",
+        statu:"",
+        ope:"",
+        commentInfo:""
+    }
+    let i,j;
+    new Vue({
+        el:"#app",
+        data: {
+            dataTable: table,
+            input:"",
+            dialogVisible: false,
+            commentInfo:"",
+            show:false,
+            dialogVisible3: false,
+            show3:false,
+            photo_url:"",
+        },
+        methods:{
+            goIndex:function(){
+                let index_url = 'http://localhost:8000/index/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                fetch(index_url, {
+                        method: 'GET',
+                    }).then(function(response) {
+                        // console.log(response)
+                        window.location.replace(index_url)
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+            showPic:function(row){
+                this.dialogVisible3 = true;
+                this.photo_url = row.goods_photo;
+            },
+            cancel3:function (){
+                this.dialogVisible3 = false;
+                // console.log(this.diaglogVisible)
+            },
+            receive:function (index,row){
+                if(row.statu == '已发货') {
+                    load.ope = "收货";
+                    load.statu = "已收货";
+                    load.goods_num = row.goods_num;
+                    load.order_num = row.order_num;
+                    fetch('http://localhost:8000/order/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(load)
+                    }).then(function(response) {
+                        // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                        window.location.replace("http://localhost:8000/order/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+                }
+
+            },
+            refunds:function (index,row){
+                if(row.statu == '已收货' || row.statu == '已退货')return;
+                load.ope = "退货";
+                load.statu = "已退货";
+                load.goods_num = row.goods_num;
+                load.order_num = row.order_num;
+                fetch('http://localhost:8000/order/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(load)
+                    }).then(function(response) {
+                        // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                        window.location.replace("http://localhost:8000/order/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+            setDialog:function(index,row){
+                this.dialogVisible = true;
+                i=index;j=row;
+                this.commentInfo = "";
+            },
+            cancel:function (){
+                this.dialogVisible = false;
+                // console.log(this.diaglogVisible)
+            },
+            comment:function (){
+                let index = i, row = j;
+                this.dialogVisible = false;
+                if(row.statu == '已收货'){
+                    load.ope = "评论";
+                    load.statu = "";
+                    load.goods_num = row.goods_num;
+                    load.order_num = row.order_num;
+                    load.commentInfo = this.commentInfo;
+                    fetch('http://localhost:8000/order/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                        method: 'POST',
+                        mode: 'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(load)
+                        }).then(function(response) {
+                            // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                            window.location.replace("http://localhost:8000/order/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                        }).catch(function(err) {
+                            // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                        });
+                }
+            }
+     }
+ });
+</script>
+</body>
+</html>

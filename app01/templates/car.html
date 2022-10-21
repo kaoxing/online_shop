@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="{% static '/js/vue.js'%}"></script>
+<script src="{% static '/js/element-ui/lib/index.js'%}"></script>
+<link rel="stylesheet" href="{% static '/js/element-ui/lib/theme-chalk/index.css'%}">
+<div id="app">
+    <div  style="text-align:right">
+        <span>---欢迎您：{{name}}---</span>
+        <el-button type="danger" @click="goIndex">返回主页</el-button>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <el-table
+      :data="dataTable"
+      style="width: 100%">
+        <el-table-column
+        prop="shop_name"
+        label="商家名"
+        width="160">
+      </el-table-column>
+        <el-table-column
+        prop="shop_num"
+        label="商家编号"
+        width="160">
+      </el-table-column>
+      <el-table-column
+        prop="goods_num"
+        label="商品编号"
+        width="160">
+      </el-table-column>
+      <el-table-column
+        prop="goods_name"
+        label="商品名"
+        width="160">
+      </el-table-column>
+        <el-table-column
+        prop="goods_price"
+        label="商品单价"
+        width="160">
+      </el-table-column>
+        <el-table-column
+        prop="goods_number"
+        label="购买数量"
+        width="160">
+      </el-table-column>
+        <el-table-column
+        prop="goods_description"
+        label="商品描述"
+        width="270">
+      </el-table-column>
+        <el-table-column label="操作" prop="action" align="center">
+          <div  slot-scope="scope">
+                <el-checkbox @change="addCar(scope.$index)">购买</el-checkbox>
+                <el-button type="primary" @click="showPic(scope.row)">查看图片</el-button>
+            <el-button type="primary" @click="setDialog2(scope.$index, scope.row)">修改数量</el-button>
+              <el-button type="danger" @click="deletef(scope.$index, scope.row)">删除</el-button>
+          </div>
+        </el-table-column>
+    </el-table>
+    <br>
+    <div style="text-align:center">
+        <el-button type="success" @click="setDialog1">修改地址</el-button>
+        <el-button type="primary" @click="buy">确认购买</el-button>
+    </div>
+    <el-dialog
+    title="地址"
+    :visible.sync="dialogVisible1"
+    width="30%"
+    :show-close="show1">
+    <el-input type="text" placeholder="地址：" v-model="add"></el-input>
+    <span slot="footer" class="dialog-footer">
+    <el-button @click="cancel1">确 定</el-button>
+    </span>
+    </el-dialog>
+    <el-dialog
+    title="购买数量"
+    :visible.sync="dialogVisible2"
+    width="30%"
+    :show-close="show2">
+    <el-input type="text" placeholder="数量：" v-model="number"></el-input>
+    <span slot="footer" class="dialog-footer">
+    <el-button @click="cancel2">取 消</el-button>
+    <el-button type="primary" @click="changeNumber">确 定</el-button>
+    </span>
+    </el-dialog>
+    <el-dialog
+    title="商品图片"
+    :visible.sync="dialogVisible3"
+    width="50%"
+    :show-close="show3">
+    <el-image
+      :src="photo_url"
+      fit="fill">
+    </el-image>
+    <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="cancel3">确 定</el-button>
+    </span>
+    </el-dialog>
+</div>
+<script>
+    let i,j;
+    let table={{ List|safe }};
+    id = "{{id}}";
+    let load={
+        id:"{{id}}",
+        goods_num:"",
+        goods_number:"",
+        order_address:"",
+        ope:"",
+    }
+    let pack=[];
+    let dataBag=[];
+    new Vue({
+        el:"#app",
+        data: {
+            // checked:false,
+            dataTable: table,
+            input:"",
+            dialogVisible1: false,
+            dialogVisible2: false,
+            dialogVisible3: false,
+            number:"",
+            add:"",
+            show1:false,
+            show2:false,
+            show3:false,
+            photo_url:"",
+            n:0,
+        },
+        methods:{
+            goIndex:function(){
+                let index_url = 'http://localhost:8000/index/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                fetch(index_url, {
+                        method: 'GET',
+                    }).then(function(response) {
+                        // console.log(response)
+                        window.location.replace(index_url)
+                    }).catch(function(err) {
+                        // 出错\了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+            showPic:function(row){
+                this.dialogVisible3 = true;
+                this.photo_url = row.goods_photo;
+            },
+            cancel3:function (){
+                this.dialogVisible3 = false;
+                // console.log(this.diaglogVisible)
+            },
+            addCar:function (index){
+                if(!pack.some(function(x){
+                    return x == index;
+                })){
+                    pack.push(index);
+                }else{
+                    pack.splice(pack.indexOf(index),1);
+                }
+            },
+            buy:function (){
+                if(this.add == ""){
+                    alert("地址不能为空！");
+                    return;
+                }
+                let j;
+                for(i=0;i<pack.length;i++){
+                    j=table[pack[i]];
+                    j['order_address'] = this.add;
+                    dataBag.push(j);
+                }
+                fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataBag)
+                }).then(function(response) {
+                    // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                    window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                }).catch(function(err) {
+                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                });
+
+            },
+            deletef:function (index,row){
+                load.ope = "删除";
+                load.goods_num = row.goods_num;
+                fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(load)
+                }).then(function(response) {
+                    // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                    window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                }).catch(function(err) {
+                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                });
+            },
+            setDialog1:function(){
+                this.dialogVisible1 = true;
+            },
+            cancel1:function (){
+                this.dialogVisible1 = false;
+                // console.log(this.diaglogVisible)
+            },
+            // changeAdd:function (){
+            //     let index = i, row = j;
+            //
+            //     this.dialogVisible1 = false;
+            //     load.ope = "地址";
+            //     load.goods_num = row.goods_num;
+            //     load.order_address = this.add;
+            //     fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+            //         method: 'POST',
+            //         mode: 'cors',
+            //         headers: {
+            //             'Content-Type': 'application/json',
+            //         },
+            //         body: JSON.stringify(load)
+            //         }).then(function(response) {
+            //             // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+            //             window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
+            //         }).catch(function(err) {
+            //             // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+            //         });
+            //
+            // },
+            setDialog2:function(index,row){
+                this.dialogVisible2 = true;
+                i=index;j=row;
+                this.number = "";
+            },
+            cancel2:function (){
+                this.dialogVisible2 = false;
+                // console.log(this.diaglogVisible)
+            },
+            changeNumber:function (){
+                let index = i, row = j;
+                let snumber = parseInt(this.number);
+                // console.log(snumber);
+                if(snumber < 1 || isNaN(snumber)){
+                    alert("数量不能小于1");
+                    return;
+                }
+                this.dialogVisible2 = false;
+                load.ope = "数量";
+                load.goods_num = row.goods_num;
+                load.goods_number = snumber;
+                fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(load)
+                    }).then(function(response) {
+                        // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                        window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            }
+     }
+ });
+</script>
+</body>
+</html>

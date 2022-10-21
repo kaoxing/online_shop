@@ -1,0 +1,253 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="{% static '/js/vue.js'%}"></script>
+<script src="{% static '/js/element-ui/lib/index.js'%}"></script>
+<link rel="stylesheet" href="{% static '/js/element-ui/lib/theme-chalk/index.css'%}">
+<div id="app">
+    <div  style="text-align:right">
+        <span>---欢迎您：{{name}}---</span>
+        <el-button type="danger" @click="goIndex">返回主页</el-button>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <el-table
+      :data="dataTable"
+      style="width: 100%">
+        <el-table-column
+        prop="shop_name"
+        label="商家名"
+        width="140">
+      </el-table-column>
+        <el-table-column
+        prop="shop_num"
+        label="商家编号"
+        width="140">
+      </el-table-column>
+      <el-table-column
+        prop="goods_num"
+        label="商品编号"
+        width="140">
+      </el-table-column>
+      <el-table-column
+        prop="goods_name"
+        label="商品名"
+        width="140">
+      </el-table-column>
+        <el-table-column
+        prop="goods_price"
+        label="商品单价"
+        width="140">
+      </el-table-column>
+        <el-table-column
+        prop="goods_number"
+        label="购买数量"
+        width="160">
+      </el-table-column>
+        <el-table-column
+        prop="goods_description"
+        label="商品描述"
+        width="270">
+      </el-table-column>
+        <el-table-column label="操作" prop="action" align="center">
+          <div  slot-scope="scope">
+              <el-button type="primary" @click="setDialog2(scope.row)">查看图片</el-button>
+              <el-button type="primary" @click="setDialog1(scope.row)">修改商品信息</el-button>
+              <el-button type="primary" @click="setDialog2(scope.$index, scope.row)">查看商品评论</el-button>
+              <el-button type="danger" @click="deletef(scope.$index, scope.row)">下架</el-button>
+          </div>
+        </el-table-column>
+    </el-table>
+    <br>
+    <div style="text-align:center">
+        <el-button type="success" @click="setDialog1">上架信息</el-button>
+    </div>
+
+    <el-dialog
+    title="商品信息"
+    :visible.sync="dialogVisible1"
+    width="30%"
+    :show-close="show1">
+    <el-form ref="form" label-width="80px">
+  <el-form-item label="商品名称">
+    <el-input maxlength=10 type="text" v-model="Gname"></el-input>
+  </el-form-item>
+    <el-form-item label="商品价格">
+    <el-input maxlength=10 type="number" v-model="Gprice"></el-input>
+  </el-form-item>
+    <el-form-item label="库存数量">
+    <el-input maxlength=10 type="number" v-model="Gnumber"></el-input>
+  </el-form-item>
+    <el-form-item label="商品描述">
+    <el-input maxlength=100 type="textarea" v-model="Gdes"></el-input>
+  </el-form-item>
+    <el-form-item label="商品照片">
+    <input type="file" id="photo" accept="image/png, image/jpeg, image/jpg" @change="preview(this)">
+      <span style="display:inline-block;width:100px;height:100px;background:#e0e0e0;">
+        <img :src="Gphoto" alt="照片" id="GImg" style="width:100%;height:100%">
+      </span>
+  </el-form-item>
+</el-form>
+    <span slot="footer" class="dialog-footer">
+        <el-button @click="cancel1">取 消</el-button>
+    <el-button @click="putaway">确 定</el-button>
+    </span>
+    </el-dialog>
+    <el-dialog
+    title="商品图片"
+    :visible.sync="dialogVisible2"
+    width="50%"
+    :show-close="show2">
+    <el-image
+      :src="photo_url"
+      fit="fill">
+    </el-image>
+    <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="cancel2">确 定</el-button>
+    </span>
+    </el-dialog>
+</div>
+<script>
+    let i,j;
+    let table={{ List|safe }};
+    id = "{{id}}";
+    let load={
+        id:"{{id}}",
+        goods_num:"",
+        goods_number:"",
+        order_address:"",
+        ope:"",
+    }
+    let pack={
+        id:"{{id}}",
+        goods_name:"",
+        goods_number:"",
+        goods_price:"",
+        goods_description:"",
+        goods_photo:"1"
+    }
+    new Vue({
+        el:"#app",
+        data: {
+            // checked:false,
+            dataTable: table,
+            input:"",
+            dialogVisible1: false,
+            dialogVisible2: false,
+            number:"",
+            add:"",
+            show1:false,
+            show2:false,
+            n:0,
+            Gname:'',
+            Gnumber:'',
+            Gprice:'',
+            Gdes:"",
+            Gphoto:"",
+            photo_url:'',
+        },
+        methods:{
+            goIndex:function(){
+                let index_url = 'http://localhost:8000/sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                fetch(index_url, {
+                        method: 'GET',
+                    }).then(function(response) {
+                        // console.log(response)
+                        window.location.replace(index_url)
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+            preview(){
+                let fr=new FileReader();
+                let photo=document.getElementById('photo').files[0];
+                if(typeof photo == 'object') {
+                    fr.readAsDataURL(photo);
+                    fr.onload = function (e) {
+                        document.getElementById('GImg').src = this.result;
+                        console.log(typeof this.result);
+                        pack.goods_photo=this.result;
+                    }
+                }
+            },
+            putaway:function (){
+
+                //上架商品
+                if(this.Gname == ""||this.Gnumber == ""||this.Gprice == ""||this.Gdes == ""||typeof pack.goods_photo == 'undefined'){
+                    alert("请正确填写全部信息！");
+                    return;
+                }
+                pack.goods_name=this.Gname;
+                pack.goods_number=this.Gnumber;
+                pack.goods_price=this.Gprice;
+                pack.goods_description=this.Gdes;
+                fetch('http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(pack)
+                }).then(function(response) {
+                    // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                    window.location.replace("http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                }).catch(function(err) {
+                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                });
+
+            },
+            deletef:function (index,row){
+                load.ope = "删除";
+                load.goods_num = row.goods_num;
+                fetch('http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(load)
+                }).then(function(response) {
+                    // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                    window.location.replace("http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                }).catch(function(err) {
+                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                });
+            },
+            setDialog1:function(row){
+                this.dialogVisible1 = true;
+                if(typeof row != 'None'){
+                    this.Gname = row.goods_name;
+                    this.Gnumber = row.goods_number;
+                    this.Gprice = row.goods_price;
+                    this.Gdes = row.goods_description;
+                    this.Gphoto = row.goods_photo;
+                }
+            },
+            cancel1:function (){
+                this.dialogVisible1 = false;
+                // console.log(this.diaglogVisible)
+            },
+            setDialog2:function(row){
+                this.dialogVisible2 = true;
+                this.photo_url = row.goods_photo;
+            },
+            cancel2:function (){
+                this.dialogVisible2 = false;
+                // console.log(this.diaglogVisible)
+            },
+
+     }
+ });
+</script>
+</body>
+</html>

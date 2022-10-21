@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="{% static '/js/vue.js'%}"></script>
+<script src="{% static '/js/element-ui/lib/index.js'%}"></script>
+<link rel="stylesheet" href="{% static '/js/element-ui/lib/theme-chalk/index.css'%}">
+<div id="app">
+    <div  style="text-align:right">
+        <span>---欢迎您：{{name}}---</span>
+        <el-button type="danger" @click="goIndex">返回主页</el-button>
+    </div>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div style="text-align:center">
+        您的余额：{{money}}
+    </div>
+    <br>
+    <br>
+    <div style="text-align:center">
+        要充值或提现的金额：<el-input type="text" placeholder="" style="width: 270px" v-model="cMoney"></el-input>
+    </div>
+    <br>
+    <br>
+    <div style="text-align:center">
+        <el-button type="primary" @click="add">充值</el-button>
+        <el-button type="danger" @click="sub">提现</el-button>
+    </div>
+
+</div>
+<script>
+    let load={
+        cMoney:"",
+        id:"{{id}}",
+        pwd:"{{pwd}}",
+        name:"{{name}}",
+        m:""
+    }
+    new Vue({
+        el: "#app",
+        data:{
+            cMoney:""
+        },
+        methods:{
+            goIndex:function(){
+                let index_url = 'http://localhost:8000/index/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                fetch(index_url, {
+                        method: 'GET',
+                    }).then(function(response) {
+                        // console.log(response)
+                        window.location.replace(index_url)
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+            add: function () {
+                load.cMoney = parseInt(this.cMoney);
+                load.m = "add";
+                if(load.cMoney <= 0){
+                    alert("金额无效！")
+                    return;
+                }
+                fetch('http://localhost:8000/wallet/', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(load)
+                }).then(function(response) {
+                    // console.log(response)
+                    // 如果修改失败
+                    // alert("源密码错误")
+                    // 如果成功修改
+                    // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                    window.location.replace(response.url)
+                }).catch(function(err) {
+                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                });
+            },
+            sub: function () {
+                load.cMoney = parseInt(this.cMoney);
+                load.m = "sub";
+                if(load.cMoney <= 0 || this.cMoney>parseInt({{money}})){
+                    alert("金额无效！")
+                    return;
+                }
+                fetch('http://localhost:8000/wallet/', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(load)
+                }).then(function (response) {
+                    // console.log(response)
+                    // 如果修改失败
+                    // alert("源密码错误")
+                    // 如果成功修改
+                    // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
+                    window.location.replace(response.url)
+                }).catch(function (err) {
+                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                });
+
+            },
+        }
+    })
+</script>
+</body>
+</html>
