@@ -93,6 +93,7 @@
     let load={info:"", way:""};
     let temp;
     let user_msg={name:"{{name}}",id:"{{id}}",pwd:"{{pwd}}"};
+    const local="http://localhost:8000/";
     let search=new Vue({
         el:"#app",
         data:{
@@ -119,7 +120,7 @@
             sear:function(){
                 load.info=this.searinfo;
                 load.way=this.radio;
-                let sear_url = "http://localhost:8000/sindex/?name={{name}}&id={{id}}&pwd={{pwd}}";
+                let sear_url = local+"sindex/?name={{name}}&id={{id}}&pwd={{pwd}}";
                 fetch(sear_url, {
                         method: 'POST',
                         mode:'cors',
@@ -142,7 +143,7 @@
             goCar:function(){
                 load.info=this.searinfo;
                 load.des="person";
-                let person_url = 'http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'mgood/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -153,7 +154,7 @@
                     });
             },
             goLogin:function(){
-                let login_url = 'http://localhost:8000/slogin/';
+                let login_url = local+'slogin/';
                 fetch(login_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -166,7 +167,7 @@
             goSetting:function(){
                 load.info=this.searinfo;
                 load.des="person";
-                let person_url = 'http://localhost:8000/ssetting/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'ssetting/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -177,7 +178,7 @@
                     });
             },
             goOrder:function(){
-                let person_url = 'http://localhost:8000/sorder/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'sorder/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -190,7 +191,7 @@
             goWallet:function(){
                 load.info=this.searinfo;
                 load.des="person";
-                let person_url = 'http://localhost:8000/swallet/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'swallet/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {

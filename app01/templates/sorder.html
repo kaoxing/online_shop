@@ -92,6 +92,7 @@
         commentInfo:""
     }
     let i,j;
+    const local = "http://localhost:8000/";
     new Vue({
         el:"#app",
         data: {
@@ -103,7 +104,7 @@
         },
         methods:{
             goIndex:function(){
-                let index_url = 'http://localhost:8000/sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let index_url = local+'sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(index_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -119,7 +120,7 @@
                     load.statu = "已发货";
                     load.goods_num = row.goods_num;
                     load.order_num = row.order_num;
-                    fetch('http://localhost:8000/sorder/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                    fetch(local+'sorder/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
@@ -128,7 +129,7 @@
                     body: JSON.stringify(load)
                     }).then(function(response) {
                         // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                        window.location.replace("http://localhost:8000/sorder/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                        window.location.replace(local+"sorder/?name={{name}}&id={{id}}&pwd={{pwd}}")
                     }).catch(function(err) {
                         // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                     });
@@ -141,7 +142,7 @@
                 load.statu = "已取消";
                 load.goods_num = row.goods_num;
                 load.order_num = row.order_num;
-                fetch('http://localhost:8000/sorder/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                fetch(local+'sorder/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
@@ -150,7 +151,7 @@
                     body: JSON.stringify(load)
                     }).then(function(response) {
                         // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                        window.location.replace("http://localhost:8000/sorder/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                        window.location.replace(local+"sorder/?name={{name}}&id={{id}}&pwd={{pwd}}")
                     }).catch(function(err) {
                         // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                     });

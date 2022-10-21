@@ -50,6 +50,7 @@
         resultPwd:"",
         description:""
     }
+    const local="http://localhost:8000/";
     let setting=new Vue({
         el: "#app",
         data: {
@@ -66,7 +67,7 @@
                 load.sourcePwd = this.sourcePwd;
                 load.resultPwd = this.resultPwd;
                 load.description = this.description;
-                fetch('http://localhost:8000/ssetting/', {
+                fetch(local+'ssetting/', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
@@ -85,7 +86,7 @@
                 });;
             },
             goIndex:function(){
-                let index_url = 'http://localhost:8000/sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let index_url = local+'sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(index_url, {
                         method: 'GET',
                     }).then(function(response) {

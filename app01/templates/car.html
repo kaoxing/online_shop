@@ -121,6 +121,7 @@
     }
     let pack=[];
     let dataBag=[];
+    const local="http://localhost:8000/";
     new Vue({
         el:"#app",
         data: {
@@ -140,7 +141,7 @@
         },
         methods:{
             goIndex:function(){
-                let index_url = 'http://localhost:8000/index/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let index_url = local+'index/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(index_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -178,7 +179,7 @@
                     j['order_address'] = this.add;
                     dataBag.push(j);
                 }
-                fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                fetch(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -187,7 +188,7 @@
                 body: JSON.stringify(dataBag)
                 }).then(function(response) {
                     // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                    window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                    window.location.replace(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}')
                 }).catch(function(err) {
                     // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                 });
@@ -196,7 +197,7 @@
             deletef:function (index,row){
                 load.ope = "删除";
                 load.goods_num = row.goods_num;
-                fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                fetch(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -205,7 +206,7 @@
                 body: JSON.stringify(load)
                 }).then(function(response) {
                     // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                    window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                    window.location.replace(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}')
                 }).catch(function(err) {
                     // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                 });
@@ -260,7 +261,7 @@
                 load.ope = "数量";
                 load.goods_num = row.goods_num;
                 load.goods_number = snumber;
-                fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                fetch(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
@@ -269,7 +270,7 @@
                     body: JSON.stringify(load)
                     }).then(function(response) {
                         // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                        window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                        window.location.replace(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}')
                     }).catch(function(err) {
                         // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                     });

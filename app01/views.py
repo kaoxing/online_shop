@@ -135,7 +135,7 @@ def order(request):
             "goods_price": '20',
             'user_address': '上海市普陀区金沙江路 1518 弄',
             'statu': '已发货',
-            'goods_photo': '/static/img/image.jpg'
+            'goods_photo': '/static/img/image.png'
         }, {
             "order_date": '2016-05-02',
             "order_num": 'x12345',
@@ -390,7 +390,7 @@ def mgood(request):
             'goods_description': '很细很黑',
             'order_address': '123',
             'statu': '',
-            'goods_photo': '/static/img/image.jpg'
+            'goods_photo': '/static/img/image.png'
         }, {
             "goods_num": 'x2s',
             "goods_name": '钩子',

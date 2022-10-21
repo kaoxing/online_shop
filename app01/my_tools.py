@@ -29,9 +29,6 @@ def shop_exist(id, pwd):
     return None
 
 
-def
-
-
 def save_photo(photo):
     # print(photo)
     c = re.sub(r'%0A', "\\n", photo)
@@ -39,7 +36,7 @@ def save_photo(photo):
     d = re.sub(r'data:image/jpg;base64,', "", d)
     d = re.sub(r'data:image/jpeg;base64,', "", d)
     # print(d)
-    # photo = base64.b64decode(d)
+    photo = base64.b64decode(d)
     filename = os.path.join(BASE_DIR, 'app01/static/img/')
     filename = filename + 'image.jpg'  # I assume you have a way of picking unique filenames
     print(filename)

@@ -121,6 +121,7 @@
     let i,j;
     let table={{ List|safe }};
     id = "{{id}}";
+    const local = "http://localhost:8000/"
     let load={
         id:"{{id}}",
         goods_num:"",
@@ -158,7 +159,7 @@
         },
         methods:{
             goIndex:function(){
-                let index_url = 'http://localhost:8000/sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let index_url = local+'sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(index_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -191,7 +192,7 @@
                 pack.goods_number=this.Gnumber;
                 pack.goods_price=this.Gprice;
                 pack.goods_description=this.Gdes;
-                fetch('http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                fetch(local+'mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -200,7 +201,7 @@
                 body: JSON.stringify(pack)
                 }).then(function(response) {
                     // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                    window.location.replace("http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                    window.location.replace(local+'mgood/?name={{name}}&id={{id}}&pwd={{pwd}}')
                 }).catch(function(err) {
                     // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                 });
@@ -209,7 +210,7 @@
             deletef:function (index,row){
                 load.ope = "删除";
                 load.goods_num = row.goods_num;
-                fetch('http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
+                fetch(local+'mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -218,7 +219,7 @@
                 body: JSON.stringify(load)
                 }).then(function(response) {
                     // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                    window.location.replace("http://localhost:8000/mgood/?name={{name}}&id={{id}}&pwd={{pwd}}")
+                    window.location.replace(local+'mgood/?name={{name}}&id={{id}}&pwd={{pwd}}')
                 }).catch(function(err) {
                     // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                 });
@@ -240,6 +241,7 @@
             setDialog2:function(row){
                 this.dialogVisible2 = true;
                 this.photo_url = row.goods_photo;
+                // console.log(this.photo_url)
             },
             cancel2:function (){
                 this.dialogVisible2 = false;

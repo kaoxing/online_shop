@@ -70,15 +70,20 @@
           </div>
         </el-table-column>
     </el-table>
-     <el-dialog
+    <el-dialog
     title="商品详细"
     :visible.sync="dialogVisible"
-    width="30%"
+    width="50%"
     :show-close="show">
          <span>商品信息：</span>
     <el-input type="textarea" v-model="goods_show"></el-input>
          <span>商家信息：</span>
          <el-input type="textarea" v-model="shopper_show"></el-input>
+        <span>商品图片:</span><br>
+        <el-image
+          :src="photo_url"
+          fit="fill">
+        </el-image>
     <span slot="footer" class="dialog-footer">
     <el-button type="primary" @click="closeDialog">确 定</el-button>
     </span>
@@ -92,6 +97,7 @@
         id:"{{id}}",
         goods_num:"",
     };
+    const local="http://localhost:8000/";
     let temp;
     let user_msg={name:"{{name}}",id:"{{id}}",pwd:"{{pwd}}"};
     let search=new Vue({
@@ -103,7 +109,7 @@
             dialogVisible: false,
             goods_show:"",
             shopper_show:"",
-            pic:"",
+            photo_url:"",
             show:false
         },
         methods:{
@@ -115,7 +121,7 @@
                   title: '成功提示',
                   message: h('i', { style: 'color: teal'}, "商品 “"+row.goods_name+'” 已添加至购物车')
                 });
-                let sear_url = "http://localhost:8000/index/?name={{name}}&id={{id}}&pwd={{pwd}}";
+                let sear_url = local+"index/?name={{name}}&id={{id}}&pwd={{pwd}}";
                 fetch(sear_url, {
                         method: 'POST',
                         mode:'cors',
@@ -133,12 +139,13 @@
             showDialog:function(index, row){
                 this.goods_show=table[index].goods_description;
                 this.shopper_show=table[index].shopper_description;
+                this.photo_url=table[index].goods_photo;
                 this.dialogVisible = true;
             },
             sear:function(){
                 load.info=this.searinfo;
                 load.way=this.radio;
-                let sear_url = "http://localhost:8000/index/?name={{name}}&id={{id}}&pwd={{pwd}}";
+                let sear_url = local+"index/?name={{name}}&id={{id}}&pwd={{pwd}}";
                 fetch(sear_url, {
                         method: 'POST',
                         mode:'cors',
@@ -161,7 +168,7 @@
             goCar:function(){
                 load.info=this.searinfo;
                 load.des="person";
-                let person_url = 'http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -172,7 +179,7 @@
                     });
             },
             goLogin:function(){
-                let login_url = 'http://localhost:8000/login/';
+                let login_url = local+'login/';
                 fetch(login_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -185,7 +192,7 @@
             goSetting:function(){
                 load.info=this.searinfo;
                 load.des="person";
-                let person_url = 'http://localhost:8000/setting/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'setting/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -196,7 +203,7 @@
                     });
             },
             goOrder:function(){
-                let person_url = 'http://localhost:8000/order/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'order/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -209,7 +216,7 @@
             goWallet:function(){
                 load.info=this.searinfo;
                 load.des="person";
-                let person_url = 'http://localhost:8000/wallet/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let person_url = local+'wallet/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(person_url, {
                         method: 'GET',
                     }).then(function(response) {

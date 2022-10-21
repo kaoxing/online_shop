@@ -45,6 +45,7 @@
         name:"{{name}}",
         m:""
     }
+    const local = "http://localhost:8000/";
     new Vue({
         el: "#app",
         data:{
@@ -52,7 +53,7 @@
         },
         methods:{
             goIndex:function(){
-                let index_url = 'http://localhost:8000/sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
+                let index_url = local+'sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
                 fetch(index_url, {
                         method: 'GET',
                     }).then(function(response) {
@@ -69,7 +70,7 @@
                     alert("金额无效！")
                     return;
                 }
-                fetch('http://localhost:8000/swallet/', {
+                fetch(local+'swallet/', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
@@ -94,7 +95,7 @@
                     alert("金额无效！")
                     return;
                 }
-                fetch('http://localhost:8000/swallet/', {
+                fetch(local+'swallet/', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
