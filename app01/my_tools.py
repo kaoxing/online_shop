@@ -71,7 +71,7 @@ def index_search_goods(info):
         }
         print("dic",dic)
         list.append(dic)
-        print()
+        print(1)
     return list
 
 
