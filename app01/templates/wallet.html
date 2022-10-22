@@ -27,7 +27,7 @@
     <br>
     <br>
     <div style="text-align:center">
-        要充值或提现的金额：<el-input type="text" placeholder="" style="width: 270px" v-model="cMoney"></el-input>
+        要充值或提现的金额：<el-input type="text" placeholder="" style="width: 270px" v-model="cMoney" maxlength="5"></el-input>
     </div>
     <br>
     <br>
@@ -64,7 +64,7 @@
                     });
             },
             add: function () {
-                load.cMoney = parseInt(this.cMoney);
+                load.cMoney = parseFloat(this.cMoney);
                 load.m = "add";
                 if(load.cMoney <= 0){
                     alert("金额无效！")
@@ -89,9 +89,9 @@
                 });
             },
             sub: function () {
-                load.cMoney = parseInt(this.cMoney);
+                load.cMoney = parseFloat(this.cMoney);
                 load.m = "sub";
-                if(load.cMoney <= 0 || this.cMoney>parseInt({{money}})){
+                if(load.cMoney <= 0 || this.cMoney>parseFloat({{money}})){
                     alert("金额无效！")
                     return;
                 }

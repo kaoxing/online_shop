@@ -139,3 +139,63 @@ def mgood_post(data):
         sql = "update inventory_table set inventory_amount = {0} where goods_num = '{1}' and shop_num = '{2}'".format(
             amount, goods_num, shop_num)
         cursor.execute(sql)
+
+
+def shopper_find_money(id):
+    # 查询用户余额
+    sql = "select shopper_money from shopper_table where shopper_num='{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    print(sql, rows)
+    if len(rows) == 0:
+        return 0
+    money = rows[0][0]
+    if money[0] == '-':
+        return '-' + money[2: -1]
+    else:
+        return money[1: -1]
+
+
+def shopper_add_money(id, pwd, cMoney):
+    # 用户充值
+    sql = "UPDATE shopper_table set shopper_money = shopper_money + money({2}) " \
+          "WHERE shopper_num = '{0}' AND shopper_password = '{1}';".format(id, pwd, cMoney)
+    print(sql)
+    cursor.execute(sql)
+
+
+def shopper_sub_money(id, pwd, cMoney):
+    # 用户提现
+    sql = "UPDATE shopper_table set shopper_money = shopper_money - money({2}) " \
+          "WHERE shopper_num = '{0}' AND shopper_password = '{1}';".format(id, pwd, cMoney)
+    cursor.execute(sql)
+
+
+def shop_find_money(id):
+    # 查询商家余额
+    sql = "select shop_money from shop_table where shop_num='{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    print(sql, rows)
+    if len(rows) == 0:
+        return 0
+    money = rows[0][0]
+    if money[0] == '-':
+        return '-' + money[2: -1]
+    else:
+        return money[1: -1]
+
+
+def shop_add_money(id, pwd, cMoney):
+    # 商家充值
+    sql = "UPDATE shop_table set shop_money = shop_money + money({2}) " \
+          "WHERE shop_num = '{0}' AND shop_password = '{1}';".format(id, pwd, cMoney)
+    print(sql)
+    cursor.execute(sql)
+
+
+def shop_sub_money(id, pwd, cMoney):
+    # 商家提现
+    sql = "UPDATE shop_table set shop_money = shop_money - money({2}) " \
+          "WHERE shop_num = '{0}' AND shop_password = '{1}';".format(id, pwd, cMoney)
+    cursor.execute(sql)

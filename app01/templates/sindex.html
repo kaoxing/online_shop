@@ -119,6 +119,10 @@
 
             sear:function(){
                 load.info=this.searinfo;
+                if(load.info == ""){
+                    alert("搜索内容不能为空");
+                    return;
+                }
                 load.way=this.radio;
                 let sear_url = local+"sindex/?name={{name}}&id={{id}}&pwd={{pwd}}";
                 fetch(sear_url, {
