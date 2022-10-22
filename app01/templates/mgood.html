@@ -50,8 +50,8 @@
         width="140">
       </el-table-column>
         <el-table-column
-        prop="goods_number"
-        label="购买数量"
+        prop="inventory_number"
+        label="库存数量"
         width="160">
       </el-table-column>
         <el-table-column
@@ -70,7 +70,7 @@
     </el-table>
     <br>
     <div style="text-align:center">
-        <el-button type="success" @click="setDialog1">上架信息</el-button>
+        <el-button type="success" @click="setDialog1('1')">上架信息</el-button>
     </div>
 
     <el-dialog
@@ -135,7 +135,8 @@
         goods_number:"",
         goods_price:"",
         goods_description:"",
-        goods_photo:"1"
+        goods_photo:"1",
+        ope:"",
     }
     new Vue({
         el:"#app",
@@ -182,7 +183,6 @@
                 }
             },
             putaway:function (){
-
                 //上架商品
                 if(this.Gname == ""||this.Gnumber == ""||this.Gprice == ""||this.Gdes == ""||typeof pack.goods_photo == 'undefined'){
                     alert("请正确填写全部信息！");
@@ -208,7 +208,7 @@
 
             },
             deletef:function (index,row){
-                load.ope = "删除";
+                load.ope = "下架";
                 load.goods_num = row.goods_num;
                 fetch(local+'mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                 method: 'POST',
@@ -226,13 +226,16 @@
             },
             setDialog1:function(row){
                 this.dialogVisible1 = true;
+                pack.ope = '上架';
                 if(typeof row != 'None'){
                     this.Gname = row.goods_name;
-                    this.Gnumber = row.goods_number;
+                    this.Gnumber = row.inventory_number;
                     this.Gprice = row.goods_price;
                     this.Gdes = row.goods_description;
                     this.Gphoto = row.goods_photo;
+                    pack.ope = '修改';
                 }
+
             },
             cancel1:function (){
                 this.dialogVisible1 = false;

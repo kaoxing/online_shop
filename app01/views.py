@@ -11,7 +11,7 @@ current_directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_directory)
 
 import coder
-import my_tools
+import my_tools as tls
 import re
 
 # D:\anaconda\envs\database\python.exe manage.py runserver
@@ -24,10 +24,11 @@ def login(request):
     if request.method == 'GET':
         return render(request, "login.html")
     # 获取接收到的账号和密码
+
     data = request.POST
     id = data.get("user")
     pwd = data.get("pwd")
-    name = my_tools.shopper_exist(id, pwd)
+    name = tls.shopper_exist(id, pwd)
     if name is not None:
         pwd = coder.encode(pwd, id)
         return redirect(local + "index/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
@@ -36,6 +37,7 @@ def login(request):
 
 
 def index(request):
+    '''主页'''
     if request.method == 'GET':
         data = request.GET
         print(data)
@@ -48,30 +50,35 @@ def index(request):
     data = json.loads(request.body)
     info = data.get("info")
     way = data.get("way")
-    # todo 此处通过way判断，若way为加购物车，则为添加购物车操作
+    goods_num = data.get("goods_num")
+    # todo 此处通过way判断，若way为'加购物车'，则为添加购物车操作
     print(data)
-    # todo 搜索 利用info搜索信息，way为1代表搜索商品，2为搜索商家
-    order_list = [{
-        "shop_name": '2016-05-02',
-        "shop_num": 'x12345',
-        "goods_num": 'x2s',
-        "goods_name": '钩子',
-        "inventory_number": '100',
-        "goods_price": '20',
-        'goods_description': '很细很黑',
-        'shopper_description': "2217",
-        'goods_photo': '/static/img/image.jpg'
-    }, {
-        "shop_name": '2016-05-02',
-        "shop_num": 'x12345',
-        "goods_num": 'x2s1',
-        "goods_name": '钩子1',
-        "inventory_number": '100',
-        "goods_price": '20',
-        'goods_description': '很细很黑',
-        'shopper_description': "2217",
-        'goods_photo': '/static/img/image.jpg'
-    }]
+    # todo 搜索 利用info搜索信息，way为'1'代表搜索商品，'2'为搜索商家
+
+    if way =='1':
+        order_list = tls.index_search_goods(info)
+
+    # order_list = [{
+    #     "shop_name": '2016-05-02',
+    #     "shop_num": 'x12345',
+    #     "goods_num": 'x2s',
+    #     "goods_name": '钩子',
+    #     "inventory_number": '100',
+    #     "goods_price": '20',
+    #     'goods_description': '很细很黑',
+    #     'shopper_description': "2217",
+    #     'goods_photo': '/static/img/image.jpg'
+    # }, {
+    #     "shop_name": '2016-05-02',
+    #     "shop_num": 'x12345',
+    #     "goods_num": 'x2s1',
+    #     "goods_name": '钩子1',
+    #     "inventory_number": '100',
+    #     "goods_price": '20',
+    #     'goods_description': '很细很黑',
+    #     'shopper_description': "2217",
+    #     'goods_photo': '/static/img/image.jpg'
+    # }]
     return JsonResponse({"data": order_list})
 
 
@@ -261,7 +268,7 @@ def slogin(request):
     data = request.POST
     id = data.get("user")
     pwd = data.get("pwd")
-    name = my_tools.shop_exist(id, pwd)
+    name = tls.shop_exist(id, pwd)
     if name is not None:
         pwd = coder.encode(pwd, id)
         return redirect(local + "sindex/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
@@ -385,7 +392,7 @@ def mgood(request):
         car_list = [{
             "goods_num": 'x2s',
             "goods_name": '钩子',
-            "goods_number": '',
+            "inventory_number": '100',
             "goods_price": '123',
             'goods_description': '很细很黑',
             'order_address': '123',
@@ -405,7 +412,7 @@ def mgood(request):
     data = request.body
     data = json.loads(data)
     photo = data.get("goods_photo")
-    my_tools.save_photo(photo)
+    tls.save_photo(photo)
     # ope = data.get("ope")
     # # todo 通过ope的值确定操作类型,"地址","数量","购买"，“删除”
     # # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
@@ -426,6 +433,6 @@ def test(request):
     user = data.get("user")
     pwd = data.get("pwd")
     # print("here")
-    # if my_tools.user_exist(user, pwd):
+    # if tls.user_exist(user, pwd):
     #     return redirect("https://www.baidu.com/")
     return render(request, "mainpage.html")
