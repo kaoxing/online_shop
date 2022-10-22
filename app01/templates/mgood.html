@@ -24,40 +24,30 @@
     <el-table
       :data="dataTable"
       style="width: 100%">
-        <el-table-column
-        prop="shop_name"
-        label="商家名"
-        width="140">
-      </el-table-column>
-        <el-table-column
-        prop="shop_num"
-        label="商家编号"
-        width="140">
-      </el-table-column>
       <el-table-column
         prop="goods_num"
         label="商品编号"
-        width="140">
+        width="190">
       </el-table-column>
       <el-table-column
         prop="goods_name"
         label="商品名"
-        width="140">
+        width="190">
       </el-table-column>
         <el-table-column
         prop="goods_price"
         label="商品单价"
-        width="140">
+        width="190">
       </el-table-column>
         <el-table-column
         prop="inventory_number"
         label="库存数量"
-        width="160">
+        width="190">
       </el-table-column>
         <el-table-column
         prop="goods_description"
         label="商品描述"
-        width="270">
+        width="320">
       </el-table-column>
         <el-table-column label="操作" prop="action" align="center">
           <div  slot-scope="scope">
@@ -137,6 +127,7 @@
         goods_description:"",
         goods_photo:"1",
         ope:"",
+        goods_num:""
     }
     new Vue({
         el:"#app",
@@ -157,6 +148,7 @@
             Gdes:"",
             Gphoto:"",
             photo_url:'',
+            Gnum:"",
         },
         methods:{
             goIndex:function(){
@@ -192,6 +184,7 @@
                 pack.goods_number=this.Gnumber;
                 pack.goods_price=this.Gprice;
                 pack.goods_description=this.Gdes;
+                pack.goods_num=this.Gnum;
                 fetch(local+'mgood/?name={{name}}&id={{id}}&pwd={{pwd}}', {
                 method: 'POST',
                 mode: 'cors',
@@ -227,15 +220,15 @@
             setDialog1:function(row){
                 this.dialogVisible1 = true;
                 pack.ope = '上架';
-                if(typeof row != 'None'){
+                if(row != '1'){
                     this.Gname = row.goods_name;
                     this.Gnumber = row.inventory_number;
                     this.Gprice = row.goods_price;
                     this.Gdes = row.goods_description;
                     this.Gphoto = row.goods_photo;
+                    this.Gnum = row.goods_num;
                     pack.ope = '修改';
                 }
-
             },
             cancel1:function (){
                 this.dialogVisible1 = false;

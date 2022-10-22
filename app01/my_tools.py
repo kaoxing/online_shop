@@ -18,7 +18,7 @@ def shopper_exist(id, pwd):
     sql = "select * from shopper_table where shopper_num='{}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    print(id,pwd,rows)
+    print(id, pwd, rows)
     if len(rows) != 0 and rows[0][2] == pwd:
         return rows[0][1]
     return None
@@ -43,12 +43,18 @@ def save_photo(photo):
     d = re.sub(r'data:image/jpeg;base64,', "", d)
     # print(d)
     photo = base64.b64decode(d)
-    filename = os.path.join(BASE_DIR, 'app01/static/img/')
-    filename = filename + 'image.jpg'  # I assume you have a way of picking unique filenames
-    print(filename)
-    with open(filename, 'wb') as f:
+    filepath = os.path.join(BASE_DIR, 'app01/static/img/')
+    filename = unique_name(filepath)
+    filepath = filepath + filename  # I assume you have a way of picking unique filenames
+    print(filepath)
+    with open(filepath, 'wb') as f:
         f.write(photo)
-    return filename
+    return "/static/img/" + filename
+
+
+def unique_name(path):
+    n = len(os.listdir(path))
+    return "image{0}.jpg".format(n)
 
 
 def index_search_goods(info):
@@ -59,17 +65,17 @@ def index_search_goods(info):
     list = []
     for row in rows:
         dic = {
-        "shop_name": row[5],
-        "shop_num": "",
-        "goods_num": row[0],
-        "goods_name": row[1],
-        "inventory_number": row[6],
-        "goods_price": row[3],
-        'goods_description': row[2],
-        'shopper_description': '',#商家描述
-        'goods_photo': row[4]
+            "shop_name": row[5],
+            "shop_num": "",
+            "goods_num": row[0],
+            "goods_name": row[1],
+            "inventory_number": row[6],
+            "goods_price": row[3],
+            'goods_description': row[2],
+            'shopper_description': '',  # 商家描述
+            'goods_photo': row[4]
         }
-        print("dic",dic)
+        print("dic", dic)
         list.append(dic)
         print(1)
     return list
@@ -83,14 +89,12 @@ def mgood_get(id):
     list = []
     for row in rows:
         dic = {
-        "goods_num": row[1],
-        "goods_name": row[2],
-        "goods_number": row[6],
-        "goods_price": row[4],
-        'goods_description': row[3],
-        # 'order_address': '123',
-        # 'statu': '',
-        'goods_photo': row[5]
+            "goods_num": row[1],
+            "goods_name": row[2],
+            "inventory_number": row[6],
+            "goods_price": row[4],
+            'goods_description': row[3],
+            'goods_photo': row[5]
         }
         # print("dic",dic)
         list.append(dic)
@@ -103,20 +107,25 @@ def mgood_post(data):
     name = data.get("goods_name")
     description = data.get("goods_description")
     price = data.get("goods_price")
-    picture = ""
+    picture = save_photo(data.get('goods_photo'))
     amount = data.get("goods_number")
     goods_num = ""
     shop_num = data.get("id")
-    ope=''
+    ope = data.get('ope')
+    print("here")
+    print(ope)
     # ope='上架'
     if ope == '上架':
-        goods_num = 'goods'+''.join([random.choice('0123456789') for i in range(5)]) #随机生成商品号 
-        sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num,name,description,price,picture)
+        goods_num = 'goods' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成商品号
+        sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description, price,
+                                                                                    picture)
         cursor.execute(sql)
-        sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(shop_num,goods_num,amount,0)
+        sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(shop_num, goods_num, amount, 0)
         cursor.execute(sql)
     elif ope == '修改':
-        sql = "updata goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= '{2}',goods_picture= '{3}' where goods_num = '{4}'".format(name,description,price,picture,goods_num)
+        sql = "updata goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= '{2}',goods_picture= '{3}' where goods_num = '{4}'".format(
+            name, description, price, picture, goods_num)
         cursor.execute(sql)
-        sql = "updata inventory_table set inventory_amount = {0} where goods_num = '{1}' and shop_num = '{2}'".format(amount,goods_num,shop_num)
+        sql = "updata inventory_table set inventory_amount = {0} where goods_num = '{1}' and shop_num = '{2}'".format(
+            amount, goods_num, shop_num)
         cursor.execute(sql)
