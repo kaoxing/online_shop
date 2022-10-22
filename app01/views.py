@@ -31,6 +31,7 @@ def login(request):
     name = tls.shopper_exist(id, pwd)
     if name is not None:
         pwd = coder.encode(pwd, id)
+        print(pwd)
         return redirect(local + "index/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
     return render(request, "login.html")
     # todo 这里加一个用户名/密码错误弹窗
@@ -55,7 +56,7 @@ def index(request):
     print(data)
     # todo 搜索 利用info搜索信息，way为'1'代表搜索商品，'2'为搜索商家
 
-    if way =='1':
+    if way == '1':
         order_list = tls.index_search_goods(info)
 
     # order_list = [{
@@ -111,16 +112,24 @@ def wallet(request):
         name = data.get('name')
         pwd = data.get('pwd')
         # todo 此处查询用户余额
-        money = 100
+        money = "{0}".format(tls.shopper_find_money(id))
+        print(money, tls.shopper_find_money(id))
+
         return render(request, "wallet.html", {'name': name, 'id': id, 'pwd': pwd, 'money': money})
     data = json.loads(request.body)
     id = data.get("id")
     pwd = data.get("pwd")
+    pwd = pwd.replace(" ", "+")
     name = data.get("name")
     cMoney = data.get("cMoney")
+    print("pwd", pwd)
     m = data.get("m")
+    print("here")
     # todo 此处通过cMoney改余额,若m==“add"则充值，否则提现
-    print(m)
+    if m == "add":
+        tls.shopper_add_money(id, coder.decode(pwd, id), cMoney)
+    else:
+        tls.shopper_sub_money(id, coder.decode(pwd, id), cMoney)
     url = local + "wallet/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd
     return redirect(url)
 
@@ -323,16 +332,23 @@ def swallet(request):
         name = data.get('name')
         pwd = data.get('pwd')
         # todo 此处查询商家余额
-        money = 100
+        money = "{0}".format(tls.shop_find_money(id))
+        # print(money, tls.shopper_find_money(id))
         return render(request, "swallet.html", {'name': name, 'id': id, 'pwd': pwd, 'money': money})
     data = json.loads(request.body)
     id = data.get("id")
     pwd = data.get("pwd")
+    pwd = pwd.replace(" ", "+")
     name = data.get("name")
     cMoney = data.get("cMoney")
+    # print("pwd", pwd)
     m = data.get("m")
+    # print("here")
     # todo 此处通过cMoney改余额,若m==“add"则充值，否则提现
-    print(m)
+    if m == "add":
+        tls.shop_add_money(id, coder.decode(pwd, id), cMoney)
+    else:
+        tls.shop_sub_money(id, coder.decode(pwd, id), cMoney)
     url = local + "swallet/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd
     return redirect(url)
 
