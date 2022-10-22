@@ -89,9 +89,10 @@
                 });
             },
             sub: function () {
-                load.cMoney = parseInt(this.cMoney);
+                load.cMoney = parseFloat(this.cMoney);
                 load.m = "sub";
-                if(load.cMoney <= 0 || this.cMoney>parseInt({{money}})){
+                if(load.cMoney <= 0 || load.cMoney>parseFloat({{money}})){
+                    console.log(load.cMoney, load.cMoney, parseFloat({{money}}),load.cMoney>parseFloat({{money}}))
                     alert("金额无效！")
                     return;
                 }

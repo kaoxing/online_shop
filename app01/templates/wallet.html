@@ -91,7 +91,7 @@
             sub: function () {
                 load.cMoney = parseFloat(this.cMoney);
                 load.m = "sub";
-                if(load.cMoney <= 0 || this.cMoney>parseFloat({{money}})){
+                if(load.cMoney <= 0 || load.cMoney>parseFloat({{money}})){
                     alert("金额无效！")
                     return;
                 }

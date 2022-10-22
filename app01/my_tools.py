@@ -140,6 +140,7 @@ def shopper_find_money(id):
     if len(rows) == 0:
         return 0
     money = rows[0][0]
+    money = money.replace(",", '')
     if money[0] == '-':
         return '-' + money[2: -1]
     else:
@@ -170,6 +171,7 @@ def shop_find_money(id):
     if len(rows) == 0:
         return 0
     money = rows[0][0]
+    money = money.replace(",", '')
     if money[0] == '-':
         return '-' + money[2: -1]
     else:
