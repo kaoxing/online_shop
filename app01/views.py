@@ -383,6 +383,7 @@ def ssetting(request):
 
 
 def mgood(request):
+    print(request.method)
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -394,7 +395,6 @@ def mgood(request):
         return render(request, "mgood.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(goods_list)})
     data = request.body
     data = json.loads(data)
-    # print(data)
     tls.mgood_post(data)
 
     # print(data.keys())

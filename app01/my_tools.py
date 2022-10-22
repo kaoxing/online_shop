@@ -112,8 +112,8 @@ def mgood_post(data):
     goods_num = ""
     shop_num = data.get("id")
     ope = data.get('ope')
-    print("here")
-    print(ope)
+    # print("here")
+    # print(ope)
     # ope='上架'
     if ope == '上架':
         goods_num = 'goods' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成商品号
