@@ -50,35 +50,16 @@ def index(request):
     data = json.loads(request.body)
     info = data.get("info")
     way = data.get("way")
+    id = data.get("id")
     goods_num = data.get("goods_num")
     # todo 此处通过way判断，若way为'加购物车'，则为添加购物车操作
-    print(data)
+    # print(data)
     # todo 搜索 利用info搜索信息，way为'1'代表搜索商品，'2'为搜索商家
-
-    if way =='1':
-        order_list = tls.index_search_goods(info)
-
-    # order_list = [{
-    #     "shop_name": '2016-05-02',
-    #     "shop_num": 'x12345',
-    #     "goods_num": 'x2s',
-    #     "goods_name": '钩子',
-    #     "inventory_number": '100',
-    #     "goods_price": '20',
-    #     'goods_description': '很细很黑',
-    #     'shopper_description': "2217",
-    #     'goods_photo': '/static/img/image.jpg'
-    # }, {
-    #     "shop_name": '2016-05-02',
-    #     "shop_num": 'x12345',
-    #     "goods_num": 'x2s1',
-    #     "goods_name": '钩子1',
-    #     "inventory_number": '100',
-    #     "goods_price": '20',
-    #     'goods_description': '很细很黑',
-    #     'shopper_description': "2217",
-    #     'goods_photo': '/static/img/image.jpg'
-    # }]
+    order_list = []
+    if way =='加购物车':
+        tls.add_cart(id,goods_num)
+    else:
+        order_list = tls.index_search(info,way)
     return JsonResponse({"data": order_list})
 
 
@@ -174,7 +155,7 @@ def car(request):
         name = data.get('name')
         pwd = data.get('pwd')
         # todo 这里通过用户id找购物车
-        car_list = [{
+        cart_list = [{
             "goods_num": 'x2s',
             "goods_name": '钩子',
             "goods_number": '',
@@ -202,7 +183,7 @@ def car(request):
             'statu': '',
             'goods_photo': '/static/img/image.jpg'
         }]
-        return render(request, "car.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(car_list)})
+        return render(request, "car.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(cart_list)})
     data = request.body
     data = json.loads(data)
     if isinstance(data, list):
