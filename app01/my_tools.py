@@ -2,7 +2,7 @@ import base64
 import os
 from pydoc import describe
 import random
-
+import coder
 import re
 from pathlib import Path
 from select import select
@@ -12,9 +12,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 cursor = connection.cursor()
 
-
 def shopper_exist(id, pwd):
-    # 用户登录
+    # 用户登录，pwd = coder.decode(pwd,id)，返回为None则不存在
     sql = "select * from shopper_table where shopper_num='{}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -25,7 +24,7 @@ def shopper_exist(id, pwd):
 
 
 def shop_exist(id, pwd):
-    # 商家登录
+    # 商家登录,pwd = coder.decode(pwd,id)，返回None则不存在
     sql = "select * from shop_table where shop_num='{}'".format(id)
     print(sql)
     cursor.execute(sql)
@@ -123,6 +122,8 @@ def mgood_post(data):
     picture = save_photo(data.get('goods_photo'))
     amount = data.get("goods_number")
     shop_num = data.get("id")
+    pwd = data.get('pwd')
+
     if ope == '上架':
         goods_num = 'goods' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成商品号
         sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description, price,
