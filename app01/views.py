@@ -57,10 +57,10 @@ def index(request):
     # print(data)
     # todo 搜索 利用info搜索信息，way为'1'代表搜索商品，'2'为搜索商家
     order_list = []
-    if way =='加购物车':
-        tls.add_cart(id,goods_num)
+    if way == '加购物车':
+        tls.add_cart(id, goods_num)
     else:
-        order_list = tls.index_search(info,way)
+        order_list = tls.index_search(info, way)
     return JsonResponse({"data": order_list})
 
 
@@ -348,6 +348,7 @@ def setting(request):
     rName = data.get('resultName')
     sPwd = data.get('sourcePwd')
     rPwd = data.get('resultPwd')
+    tls.shopper_change_info(id, rName, sPwd, rPwd)
     # todo 在数据库中查询并修改
     print(data)
     # todo 若修改成功
@@ -363,7 +364,7 @@ def ssetting(request):
         name = data.get('name')
         pwd = data.get('pwd')
         # todo 这里要先确定数据库雀食有这个商家并获取商家描述
-        description = "钩子"
+        description = tls.shop_get_des(id)
         return render(request, "ssetting.html", {'name': name, 'id': id, 'pwd': pwd, 'description': description})
     # 接收到修改请求
     data = json.loads(request.body)
@@ -371,9 +372,12 @@ def ssetting(request):
     rName = data.get('resultName')
     sPwd = data.get('sourcePwd')
     rPwd = data.get('resultPwd')
+    rDes = data.get('description')
     # todo 在数据库中查询并修改
-    print(data)
+    # print(data)
+    tls.shop_change_info(id, rName, sPwd, rPwd, rDes)
     # todo 若修改成功
+
     rPwd = coder.encode(rPwd, id)
     url = local + "ssetting/" + "?id=" + id + "&name=" + rName + "&pwd=" + rPwd
     return redirect(url)

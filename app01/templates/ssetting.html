@@ -63,6 +63,10 @@
         },
         methods: {
             reSet: function () {
+                if(this.resultPwd.length<6||this.resultPwd.length>12){
+                    alert("密码过短或过长");
+                    return;
+                }
                 load.resultName = this.name;
                 load.sourcePwd = this.sourcePwd;
                 load.resultPwd = this.resultPwd;

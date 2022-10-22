@@ -202,3 +202,24 @@ def shop_sub_money(id, pwd, cMoney):
     sql = "UPDATE shop_table set shop_money = shop_money - money({2}) " \
           "WHERE shop_num = '{0}' AND shop_password = '{1}';".format(id, pwd, cMoney)
     cursor.execute(sql)
+
+
+def shopper_change_info(id,rName,sPwd,rPwd):
+    # 用户账号信息修改
+    sql = "UPDATE shopper_table set shopper_name = '{0}',shopper_password = '{1}' " \
+          "WHERE shopper_num = '{2}' AND shopper_password = '{3}';".format(rName, rPwd, id, sPwd)
+    cursor.execute(sql)
+
+
+def shop_change_info(id,rName,sPwd,rPwd,rDes):
+    # 用户账号信息修改
+    sql = "UPDATE shop_table set shop_name = '{0}',shop_password = '{1}',shop_description = '{4}' " \
+          "WHERE shop_num = '{2}' AND shop_password = '{3}';".format(rName, rPwd, id, sPwd, rDes)
+    cursor.execute(sql)
+
+
+def shop_get_des(id):
+    sql = "select shop_description from shop_table where shop_num = '{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    return rows[0][0]
