@@ -393,25 +393,26 @@ def mgood(request):
         pwd = data.get('pwd')
         goods_list = tls.mgood_get(id)
         return render(request, "mgood.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(goods_list)})
-    data = request.body
-    data = json.loads(data)
-    tls.mgood_post(data)
+    elif request.method == 'POST':
+        data = request.body
+        data = json.loads(data)
+        tls.mgood_post(data)
 
-    # print(data.keys())
-    # photo = data.get("goods_photo")
-    # ope = data.get()
-    # tls.save_photo(photo)
+        # print(data.keys())
+        # photo = data.get("goods_photo")
+        # ope = data.get()
+        # tls.save_photo(photo)
 
-    # ope = data.get("ope")
-    # # todo 通过ope的值确定操作类型,"地址","数量","购买"，“删除”
-    # # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
-    # shopper_num = data.get('id')
-    # goods_num = data.get('goods_num')
-    # goods_number = data.get('goods_number')
-    # order_address = data.get('order_address')
-    # print(shopper_num, goods_num, goods_number, order_address, ope)
-    # todo 通过上述参数在数据库中修改
-    return render(request, "mgood.html")
+        # ope = data.get("ope")
+        # # todo 通过ope的值确定操作类型,"地址","数量","购买"，“删除”
+        # # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
+        # shopper_num = data.get('id')
+        # goods_num = data.get('goods_num')
+        # goods_number = data.get('goods_number')
+        # order_address = data.get('order_address')
+        # print(shopper_num, goods_num, goods_number, order_address, ope)
+        # todo 通过上述参数在数据库中修改
+        return render(request, "mgood.html")
 
 
 def test(request):

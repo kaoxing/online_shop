@@ -102,19 +102,13 @@ def mgood_get(id):
 
 
 def mgood_post(data):
-    # print("!!!!!!!!!!!!!!!!!!!!!",data.get("id"))
-    # print("!!!!!!!!!!!!!!!!!!!!!",data.keys())
+    ope = data.get('ope')
     name = data.get("goods_name")
     description = data.get("goods_description")
     price = data.get("goods_price")
     picture = save_photo(data.get('goods_photo'))
     amount = data.get("goods_number")
-    goods_num = ""
     shop_num = data.get("id")
-    ope = data.get('ope')
-    # print("here")
-    # print(ope)
-    # ope='上架'
     if ope == '上架':
         goods_num = 'goods' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成商品号
         sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description, price,
@@ -123,9 +117,11 @@ def mgood_post(data):
         sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(shop_num, goods_num, amount, 0)
         cursor.execute(sql)
     elif ope == '修改':
-        sql = "updata goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= '{2}',goods_picture= '{3}' where goods_num = '{4}'".format(
+        goods_num = data.get('goods_num')
+        sql = "update goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= {2},goods_picture= '{3}' where goods_num = '{4}'".format(
             name, description, price, picture, goods_num)
+        print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!sql:',sql)
         cursor.execute(sql)
-        sql = "updata inventory_table set inventory_amount = {0} where goods_num = '{1}' and shop_num = '{2}'".format(
+        sql = "update inventory_table set inventory_amount = {0} where goods_num = '{1}' and shop_num = '{2}'".format(
             amount, goods_num, shop_num)
         cursor.execute(sql)
