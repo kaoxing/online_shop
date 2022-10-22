@@ -58,16 +58,66 @@ def unique_name(path):
 
 def add_cart(id,goods_num):
     sql = "select * from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(id,goods_num)
-    print("!!!!!!!!!!!!!!!!!!!!!!!!",sql)
     cursor.execute(sql)
     rows = cursor.fetchall()
     if len(rows) == 0:
         sql = "insert into cart_table values('{0}','{1}',{2})".format(id,goods_num,1)
     else:
         sql = "update cart_table set cart_number = cart_number+1 where shopper_num = '{0}' and goods_num = '{1}'".format(id,goods_num)
-    print("??????????????????????",sql)
     cursor.execute(sql)
 
+
+
+def cart_show(id):
+    sql = "select * from cart_view where shopper_num = '{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    list = []
+    for row in rows:
+        dic = {
+            "goods_num": row[0],
+            "goods_name": row[1],
+            'goods_description': row[2],
+            "goods_price": row[3],
+            'goods_photo': row[4],
+            "shop_name": row[5],
+            "shop_num": row[6],
+            'shopper_description': row[7],  # 商家描述
+            "inventory_number": row[8],
+            "inventory_sold":row[9],
+            "goods_number":row[11]
+        }
+        list.append(dic)
+    return list
+
+def cart_post(data):
+    if isinstance(data, list):
+        # todo 若data为数组类型，则为购买
+        print(data[0])
+        # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
+        order_num = ""
+        shopper_num = ""
+        order_address = data[0].get('order_address')
+        print(order_address)
+        sql = "insert into order_table values('{0}',now(),'{1}','{2}')".format(order_num,shopper_num,order_address)
+        # cursor.execute(sql)
+        for i in data:
+            goods_num = ""
+            content_number = 0
+            content_stutas = ""
+            sql = "insert into content_table values('{0}','{1}',{2},'{3}')".format(order_num,goods_num,content_number,content_stutas)
+            # cursor.execute(sql)
+    else:
+        ope = data.get("ope")
+        shopper_num = data.get('id')
+        goods_num = data.get('goods_num')
+        goods_number = data.get('goods_number')
+        print(shopper_num, goods_num, goods_number, ope)
+        if ope == '数量':
+            sql = "update cart_table set cart_number = {0} where shopper_num = '{1}' and goods_num = '{2}'".format(goods_number,shopper_num,goods_num)
+        elif ope == '删除':
+            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+        cursor.execute(sql)
 
 def index_search(info,way):
     if way =='1':
