@@ -155,6 +155,7 @@ def order(request):
 
 
 def car(request):
+    print()
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
