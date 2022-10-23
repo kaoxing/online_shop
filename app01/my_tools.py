@@ -7,6 +7,8 @@ import re
 from pathlib import Path
 from select import select
 from django.db import connection
+from datetime import datetime
+import time
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -296,46 +298,51 @@ def shop_get_des(id):
     rows = cursor.fetchall()
     return rows[0][0]
 
-def shopper_order_get(id):
-    order_list = [{
-        "order_date": '2016-05-02',
-        "order_num": 'x12345',
-        "goods_num": 'x2s',
-        "goods_name": '钩子',
-        "goods_number": '100',
-        "goods_price": '20',
-        'user_address': '上海市普陀区金沙江路 1518 弄',
-        'statu': '已发货',
-        'goods_photo': '/static/img/image.png'
-    }]
-    # sql = "select * from shopper_order_view where shopper_num = {0}".format(id)
-    # cursor.execute(sql)
-    # rows = cursor.fetchall()
-    # order_list = []
-    # print(rows)
-    # for row in rows:
-    #     dic = {
-    #         "goods_num": row[1],
-    #         "goods_name": row[2],
-    #         "inventory_number": row[6],
-    #         "goods_price": row[4],
-    #         'goods_description': row[3],
-    #         'goods_photo': row[5]
-    #     }
-    #     # print("dic",dic)
-    #     list.append(dic)
 
+def shopper_order_get(id):
+    # sql = "insert into order_table values('1234567890',now()+'8:00','shopper123','{2}')"
+    sql = "select * from shopper_order_view where shopper_num = '{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    order_list = []
+    # print(rows)
+    for row in rows:
+        dic = {
+            "shopper_num": row[0],
+            "order_num": row[1],
+            "goods_number": row[2],
+            "goods_name": row[3],
+            "shop_name": row[4],
+            'shop_num': row[5],
+            'goods_num': row[6],
+            'order_date': timestamp_to_time(row[7]),
+            'goods_photo': row[8],
+            'user_address': row[9],
+            'statu': row[10],
+            'goods_price': row[11]
+        }
+        order_list.append(dic)
     return order_list
 
 
 def shopper_comment(data):
     # 用户评论
+    print("comment")
     comment = data.get("commentInfo")
     goods_num = data.get("goods_num")
     order_num = data.get("order_num")
-    sql = "update evaluation_table set evaluation_information = '{0}'," \
-          "goods_num = '{1}', order_num = '{2}', evaluation_time = now() ".format(comment, goods_num, order_num)
+    sql = "insert into evaluation_table values('{0}','{1}',now()+'8:00','{2}')".format(order_num, goods_num, comment)
+    # sql = "insert evaluation_table set evaluation_information = '{0}'," \
+    #       "goods_num = '{1}', order_num = '{2}', evaluation_time = now() ".format(comment, goods_num, order_num)
     cursor.execute(sql)
 
 
+def timestamp_to_time(timestamp):
+    return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
+
+def shopper_receive(data):
+    goods_num = data.get("goods_num")
+    order_num = data.get("order_num")
+    sql = "update content_table set content_status = '已收货' where order_num = '{0}' and goods_num = '{1}'".format(order_num,goods_num)
+    cursor.execute(sql)
