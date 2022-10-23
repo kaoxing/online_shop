@@ -171,6 +171,8 @@ def car(request):
 
 
 def sorder(request):
+    print()
+    print()
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
