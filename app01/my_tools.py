@@ -339,12 +339,12 @@ def shopper_order_get(id):
         order_list.append(dic)
     return order_list
 
-def shopper_order_get(id):
-    sql = "select * from shopper_order_view where shop_num = '{0}'".format(id)
+def shop_order_get(id):
+    sql = "select * from shop_order_view where shop_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
     order_list = []
-    # print(rows)
+    print(rows)
     for row in rows:
         dic = {
             "shop_num": row[0],
