@@ -69,7 +69,7 @@ CREATE TABLE evaluation_table(
 order_num CHAR(10),                             --订单号
 goods_num CHAR(10),                             --商品号
 evaluation_time TIMESTAMP,                      --评论时间
-evalutaion_infomation VARCHAR(100) NOT NULL,    --评论信息
+evaluation_information VARCHAR(100) NOT NULL,    --评论信息
 PRIMARY Key (order_num,goods_num,evaluation_time),
 FOREIGN KEY (order_num,goods_num) REFERENCES content_table(order_num,goods_num)
 );

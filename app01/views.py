@@ -120,27 +120,8 @@ def order(request):
         pwd = data.get('pwd')
         # print("herep")
         # todo 这里通过用户id找到用户订单
-        order_list = [{
-            "order_date": '2016-05-02',
-            "order_num": 'x12345',
-            "goods_num": 'x2s',
-            "goods_name": '钩子',
-            "goods_number": '100',
-            "goods_price": '20',
-            'user_address': '上海市普陀区金沙江路 1518 弄',
-            'statu': '已发货',
-            'goods_photo': '/static/img/image.png'
-        }, {
-            "order_date": '2016-05-02',
-            "order_num": 'x12345',
-            "goods_num": 'x2s',
-            "goods_name": '钩子',
-            "goods_number": '100',
-            "goods_price": '20',
-            'user_address': '上海市普陀区金沙江路 1518 弄',
-            'statu': '已收货',
-            'goods_photo': '/static/img/image.jpg'
-        }]
+        order_list=tls.shopper_order_get(id)
+
         return render(request, "order.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(order_list)})
     data = request.body
     data = json.loads(data)

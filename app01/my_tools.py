@@ -296,6 +296,37 @@ def shop_get_des(id):
     rows = cursor.fetchall()
     return rows[0][0]
 
+def shopper_order_get(id):
+    order_list = [{
+        "order_date": '2016-05-02',
+        "order_num": 'x12345',
+        "goods_num": 'x2s',
+        "goods_name": '钩子',
+        "goods_number": '100',
+        "goods_price": '20',
+        'user_address': '上海市普陀区金沙江路 1518 弄',
+        'statu': '已发货',
+        'goods_photo': '/static/img/image.png'
+    }]
+    # sql = "select * from shopper_order_view where shopper_num = {0}".format(id)
+    # cursor.execute(sql)
+    # rows = cursor.fetchall()
+    # order_list = []
+    # print(rows)
+    # for row in rows:
+    #     dic = {
+    #         "goods_num": row[1],
+    #         "goods_name": row[2],
+    #         "inventory_number": row[6],
+    #         "goods_price": row[4],
+    #         'goods_description': row[3],
+    #         'goods_photo': row[5]
+    #     }
+    #     # print("dic",dic)
+    #     list.append(dic)
+
+    return order_list
+
 
 def shopper_comment(data):
     # 用户评论
@@ -305,5 +336,6 @@ def shopper_comment(data):
     sql = "update evaluation_table set evaluation_information = '{0}'," \
           "goods_num = '{1}', order_num = '{2}', evaluation_time = now() ".format(comment, goods_num, order_num)
     cursor.execute(sql)
+
 
 
