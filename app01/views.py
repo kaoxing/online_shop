@@ -120,13 +120,15 @@ def order(request):
         pwd = data.get('pwd')
         # print("herep")
         # todo 这里通过用户id找到用户订单
-        order_list=tls.shopper_order_get(id)
+        order_list = tls.shopper_order_get(id)
 
         return render(request, "order.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(order_list)})
     data = request.body
     data = json.loads(data)
     ope = data.get("ope")
     print(data)
+    print(ope)
+    print(ope == "评论")
     # todo 通过ope的值确定操作类型,"评论","退货","收货"
     if ope == "评论":
         tls.shopper_comment(data)
@@ -224,7 +226,7 @@ def sindex(request):
     # todo 判断是去个人中心还是搜索
     info = data.get("info")
     way = data.get("way")
-    order_list = tls.index_search(info,way)
+    order_list = tls.index_search(info, way)
     return JsonResponse({"data": order_list})
 
 
