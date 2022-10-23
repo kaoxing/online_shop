@@ -1,0 +1,1 @@
+CREATE INDEX price_index ON goods_table(goods_price)
