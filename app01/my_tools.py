@@ -100,13 +100,26 @@ def cart_post(data):
         order_address = data[0].get('order_address')
         print(order_address)
         sql = "insert into order_table values('{0}',now(),'{1}','{2}')".format(order_num,shopper_num,order_address)
-        # cursor.execute(sql)
+        # cursor.execute(sql) # 插订单表
+
         for i in data:
             goods_num = ""
+            goods_price = 0
             content_number = 0
             content_stutas = ""
+            # sql = "select goods_price,cart_number from cart_view where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+            # cursor.execute(sql)# 查价格和数量
+            money = goods_price*content_number
+            sql = "update shopper_table set shopper_money = shopper_money - money({0})".format(money)
+            # cursor.execute(sql)# 用户钱包更新
+            sql = "update shop_table set shop_money = shop_money + money({0})".format(money)
+            # cursor.execute(sql)# 商家钱包更新
             sql = "insert into content_table values('{0}','{1}',{2},'{3}')".format(order_num,goods_num,content_number,content_stutas)
-            # cursor.execute(sql)
+            # cursor.execute(sql)# 插包含表
+            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+            # cursor.execute(sql)# 删购物车表
+
+
     else:
         ope = data.get("ope")
         shopper_num = data.get('id')
