@@ -95,6 +95,7 @@ def cart_post(data):
         # todo 若data为数组类型，则为购买
         print(data[0])
         # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
+        print(data)
         order_num = ""
         shopper_num = ""
         order_address = data[0].get('order_address')
@@ -282,7 +283,9 @@ def shop_change_info(id,rName,sPwd,rPwd,rDes):
 
 
 def shop_get_des(id):
+    # 获取商家描述
     sql = "select shop_description from shop_table where shop_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
     return rows[0][0]
+

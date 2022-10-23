@@ -174,10 +174,9 @@
                     return;
                 }
                 let j;
-                dataBag.push({{id}});
+                dataBag.push(['{{id}}',this.add]);
                 for(i=0;i<pack.length;i++){
                     j=table[pack[i]];
-                    j['order_address'] = this.add;
                     dataBag.push(j);
                 }
                 fetch(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
