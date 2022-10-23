@@ -61,26 +61,6 @@ def index(request):
     return JsonResponse({"data": order_list})
 
 
-def setting(request):
-    if request.method == 'GET':
-        data = request.GET
-        id = data.get('id')
-        name = data.get('name')
-        pwd = data.get('pwd')
-        # todo 这里要先确定数据库雀食有这个人
-        return render(request, "setting.html", {'name': name, 'id': id, 'pwd': pwd})
-    # 接收到修改请求
-    data = json.loads(request.body)
-    id = data.get('id')
-    rName = data.get('resultName')
-    sPwd = data.get('sourcePwd')
-    rPwd = data.get('resultPwd')
-    # todo 在数据库中查询并修改
-    print(data)
-    # todo 若修改成功
-    rPwd = coder.encode(rPwd, id)
-    url = local + "setting/" + "?id=" + id + "&name=" + rName + "&pwd=" + rPwd
-    return redirect(url)
 
 
 def wallet(request):

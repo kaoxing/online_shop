@@ -124,10 +124,10 @@ def cart_post(data):
             order_address = data[0][1]
             sql = "insert into order_table values('{0}',now()+'8:00','{1}','{2}')".format(order_num, shopper_num, order_address)
             cursor.execute(sql) # 插订单表
-            sql = "update shopper_table set shopper_money = shopper_money - money({0})".format(total_money)
+            sql = "update shopper_table set shopper_money = shopper_money - money({0}) where shopper_num = '{1}'".format(total_money,shopper_num)
             cursor.execute(sql)# 用户钱包更新
-            sql = "update shop_table set shop_money = shop_money + money({0})".format(total_money)
-            cursor.execute(sql)# 商家钱包更新
+            # sql = "update shop_table set shop_money = shop_money + money({0})".format(total_money)
+            # cursor.execute(sql)# 商家钱包更新
             for i in data[1:]:
                 goods_num = i.get("goods_num")
                 sql = "insert into content_table values('{0}','{1}',{2},'待发货')".format(order_num, goods_num, content_number)
