@@ -145,11 +145,14 @@ def order(request):
     data = request.body
     data = json.loads(data)
     ope = data.get("ope")
+    print(data)
     # todo 通过ope的值确定操作类型,"评论","退货","收货"
-    goods_num = data.get('goods_num')
-    order_num = data.get('order_num')
-    order_statu = data.get('statu')
-    print(goods_num, order_num, order_statu, ope)
+    if ope == "评论":
+        tls.shopper_comment(data)
+    elif ope == "退货":
+        tls.shopper_refund(data)
+    elif ope == "收货":
+        tls.shopper_receive(data)
     # todo 通过上述参数在数据库中修改
     return render(request, "order.html")
 

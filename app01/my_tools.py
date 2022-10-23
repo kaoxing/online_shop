@@ -295,3 +295,15 @@ def shop_get_des(id):
     cursor.execute(sql)
     rows = cursor.fetchall()
     return rows[0][0]
+
+
+def shopper_comment(data):
+    # 用户评论
+    comment = data.get("commentInfo")
+    goods_num = data.get("goods_num")
+    order_num = data.get("order_num")
+    sql = "update evaluation_table set evaluation_information = '{0}'," \
+          "goods_num = '{1}', order_num = '{2}', evaluation_time = now() ".format(comment, goods_num, order_num)
+    cursor.execute(sql)
+
+
