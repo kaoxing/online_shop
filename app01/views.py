@@ -61,8 +61,6 @@ def index(request):
     return JsonResponse({"data": order_list})
 
 
-
-
 def wallet(request):
     if request.method == 'GET':
         data = request.GET
@@ -98,10 +96,7 @@ def order(request):
         id = data.get('id')
         name = data.get('name')
         pwd = data.get('pwd')
-        # print("herep")
-        # todo 这里通过用户id找到用户订单
         order_list = tls.shopper_order_get(id)
-
         return render(request, "order.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(order_list)})
     data = request.body
     data = json.loads(data)
@@ -142,27 +137,7 @@ def sorder(request):
         id = data.get('id')
         name = data.get('name')
         pwd = data.get('pwd')
-        # print("herep")
-        # todo 这里通过商家id找到商家订单
-        order_list = [{
-            "order_date": '2016-05-02',
-            "order_num": 'x12345',
-            "goods_num": 'x2s',
-            "goods_name": '钩子',
-            "goods_number": '100',
-            "goods_price": '20',
-            'user_address': '上海市普陀区金沙江路 1518 弄',
-            'statu': '待发货',
-        }, {
-            "order_date": '2016-05-02',
-            "order_num": 'x12345',
-            "goods_num": 'x2s',
-            "goods_name": '钩子',
-            "goods_number": '100',
-            "goods_price": '20',
-            'user_address': '上海市普陀区金沙江路 1518 弄',
-            'statu': '待发货',
-        }]
+        order_list = tls.shop_order_get(id)
         return render(request, "sorder.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(order_list)})
     data = request.body
     data = json.loads(data)
@@ -302,21 +277,6 @@ def mgood(request):
         data = request.body
         data = json.loads(data)
         tls.mgood_post(data)
-
-        # print(data.keys())
-        # photo = data.get("goods_photo")
-        # ope = data.get()
-        # tls.save_photo(photo)
-
-        # ope = data.get("ope")
-        # # todo 通过ope的值确定操作类型,"地址","数量","购买"，“删除”
-        # # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
-        # shopper_num = data.get('id')
-        # goods_num = data.get('goods_num')
-        # goods_number = data.get('goods_number')
-        # order_address = data.get('order_address')
-        # print(shopper_num, goods_num, goods_number, order_address, ope)
-        # todo 通过上述参数在数据库中修改
         return render(request, "mgood.html")
 
 

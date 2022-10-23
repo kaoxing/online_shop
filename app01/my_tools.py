@@ -316,7 +316,6 @@ def shop_get_des(id):
 
 
 def shopper_order_get(id):
-    # sql = "insert into order_table values('1234567890',now()+'8:00','shopper123','{2}')"
     sql = "select * from shopper_order_view where shopper_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -330,6 +329,30 @@ def shopper_order_get(id):
             "goods_name": row[3],
             "shop_name": row[4],
             'shop_num': row[5],
+            'goods_num': row[6],
+            'order_date': timestamp_to_time(row[7]),
+            'goods_photo': row[8],
+            'user_address': row[9],
+            'statu': row[10],
+            'goods_price': row[11]
+        }
+        order_list.append(dic)
+    return order_list
+
+def shopper_order_get(id):
+    sql = "select * from shopper_order_view where shop_num = '{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    order_list = []
+    # print(rows)
+    for row in rows:
+        dic = {
+            "shop_num": row[0],
+            "order_num": row[1],
+            "goods_number": row[2],
+            "goods_name": row[3],
+            "shopper_name": row[4],
+            'shopper_num': row[5],
             'goods_num': row[6],
             'order_date': timestamp_to_time(row[7]),
             'goods_photo': row[8],
