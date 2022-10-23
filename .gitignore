@@ -1,3 +1,4 @@
 /app01/*.pyc
 *.pyc
 /online_shop/*.pyc
+/app01/__pycache__/*.pyc
