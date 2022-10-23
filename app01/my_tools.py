@@ -12,6 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 cursor = connection.cursor()
 
+
 def shopper_exist(id, pwd):
     # 用户登录，pwd = coder.decode(pwd,id)，返回为None则不存在
     sql = "select * from shopper_table where shopper_num='{}'".format(id)
@@ -56,16 +57,16 @@ def unique_name(path):
     return "image{0}.jpg".format(n)
 
 
-def add_cart(id,goods_num):
-    sql = "select * from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(id,goods_num)
+def add_cart(id, goods_num):
+    sql = "select * from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(id, goods_num)
     cursor.execute(sql)
     rows = cursor.fetchall()
     if len(rows) == 0:
-        sql = "insert into cart_table values('{0}','{1}',{2})".format(id,goods_num,1)
+        sql = "insert into cart_table values('{0}','{1}',{2})".format(id, goods_num, 1)
     else:
-        sql = "update cart_table set cart_number = cart_number+1 where shopper_num = '{0}' and goods_num = '{1}'".format(id,goods_num)
+        sql = "update cart_table set cart_number = cart_number+1 where shopper_num = '{0}' and goods_num = '{1}'".format(
+            id, goods_num)
     cursor.execute(sql)
-
 
 
 def cart_show(id):
@@ -84,11 +85,12 @@ def cart_show(id):
             "shop_num": row[6],
             'shopper_description': row[7],  # 商家描述
             "inventory_number": row[8],
-            "inventory_sold":row[9],
-            "goods_number":row[11]
+            "inventory_sold": row[9],
+            "goods_number": row[11]
         }
         list.append(dic)
     return list
+
 
 def cart_post(data):
     if isinstance(data, list):
@@ -100,7 +102,7 @@ def cart_post(data):
         shopper_num = ""
         order_address = data[0].get('order_address')
         print(order_address)
-        sql = "insert into order_table values('{0}',now(),'{1}','{2}')".format(order_num,shopper_num,order_address)
+        sql = "insert into order_table values('{0}',now(),'{1}','{2}')".format(order_num, shopper_num, order_address)
         # cursor.execute(sql) # 插订单表
 
         for i in data:
@@ -110,14 +112,16 @@ def cart_post(data):
             content_stutas = ""
             # sql = "select goods_price,cart_number from cart_view where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
             # cursor.execute(sql)# 查价格和数量
-            money = goods_price*content_number
+            money = goods_price * content_number
             sql = "update shopper_table set shopper_money = shopper_money - money({0})".format(money)
             # cursor.execute(sql)# 用户钱包更新
             sql = "update shop_table set shop_money = shop_money + money({0})".format(money)
             # cursor.execute(sql)# 商家钱包更新
-            sql = "insert into content_table values('{0}','{1}',{2},'{3}')".format(order_num,goods_num,content_number,content_stutas)
+            sql = "insert into content_table values('{0}','{1}',{2},'{3}')".format(order_num, goods_num, content_number,
+                                                                                   content_stutas)
             # cursor.execute(sql)# 插包含表
-            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
+                                                                                                  goods_num)
             # cursor.execute(sql)# 删购物车表
 
 
@@ -128,15 +132,18 @@ def cart_post(data):
         goods_number = data.get('goods_number')
         print(shopper_num, goods_num, goods_number, ope)
         if ope == '数量':
-            sql = "update cart_table set cart_number = {0} where shopper_num = '{1}' and goods_num = '{2}'".format(goods_number,shopper_num,goods_num)
+            sql = "update cart_table set cart_number = {0} where shopper_num = '{1}' and goods_num = '{2}'".format(
+                goods_number, shopper_num, goods_num)
         elif ope == '删除':
-            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
+                                                                                                  goods_num)
         cursor.execute(sql)
 
-def index_search(info,way):
-    if way =='1':
+
+def index_search(info, way):
+    if way == '1':
         sql = "select * from goods_view where goods_name like '%{0}%'".format(info)
-    elif way =='2':
+    elif way == '2':
         sql = "select * from goods_view where shop_name like '%{0}%'".format(info)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -152,7 +159,7 @@ def index_search(info,way):
             "shop_num": row[6],
             'shopper_description': row[7],  # 商家描述
             "inventory_number": row[8],
-            "inventory_sold":row[9],
+            "inventory_sold": row[9],
         }
         list.append(dic)
     return list
@@ -268,14 +275,14 @@ def shop_sub_money(id, pwd, cMoney):
     cursor.execute(sql)
 
 
-def shopper_change_info(id,rName,sPwd,rPwd):
+def shopper_change_info(id, rName, sPwd, rPwd):
     # 用户账号信息修改
     sql = "UPDATE shopper_table set shopper_name = '{0}',shopper_password = '{1}' " \
           "WHERE shopper_num = '{2}' AND shopper_password = '{3}';".format(rName, rPwd, id, sPwd)
     cursor.execute(sql)
 
 
-def shop_change_info(id,rName,sPwd,rPwd,rDes):
+def shop_change_info(id, rName, sPwd, rPwd, rDes):
     # 用户账号信息修改
     sql = "UPDATE shop_table set shop_name = '{0}',shop_password = '{1}',shop_description = '{4}' " \
           "WHERE shop_num = '{2}' AND shop_password = '{3}';".format(rName, rPwd, id, sPwd, rDes)
@@ -288,4 +295,3 @@ def shop_get_des(id):
     cursor.execute(sql)
     rows = cursor.fetchall()
     return rows[0][0]
-
