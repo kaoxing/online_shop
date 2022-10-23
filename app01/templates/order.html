@@ -27,7 +27,7 @@
       <el-table-column
         prop="order_date"
         label="日期"
-        width="100">
+        width="180">
       </el-table-column>
       <el-table-column
         prop="order_num"
@@ -67,7 +67,7 @@
         <el-table-column
         prop="user_address"
         label="地址"
-        width="360">
+        width="300">
       </el-table-column>
         <el-table-column
         prop="statu"
@@ -170,11 +170,16 @@
                     }).catch(function(err) {
                         // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                     });
+                }else{
+                    alert("已发货才可收货")
                 }
 
             },
             refunds:function (index,row){
-                if(row.statu == '已收货' || row.statu == '已退货')return;
+                if(row.statu == '已收货' || row.statu == '已退货'){
+                    alert("已收货或已退货后无法退货")
+                    return;
+                }
                 load.ope = "退货";
                 load.statu = "已退货";
                 load.goods_num = row.goods_num;
@@ -223,6 +228,8 @@
                         }).catch(function(err) {
                             // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                         });
+                }else{
+                    alert("只能评论已收货的商品")
                 }
             }
      }

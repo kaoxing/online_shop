@@ -2,8 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app01/static/Template/Deal/H898" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app01/templates/电商项目实战/3.vue-项目实战day1/code/vue_shop" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/app01/templates/电商项目实战/4.vue-项目实战day2/code/vue_shop" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/app01/static/Template/Deal/H898" vcs="" />
+    <mapping directory="$PROJECT_DIR$/app01/templates/电商项目实战/3.vue-项目实战day1/code/vue_shop" vcs="" />
+    <mapping directory="$PROJECT_DIR$/app01/templates/电商项目实战/4.vue-项目实战day2/code/vue_shop" vcs="" />
   </component>
 </project>
