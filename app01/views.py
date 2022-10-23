@@ -166,6 +166,7 @@ def car(request):
     data = request.body
     data = json.loads(data)
     tls.cart_post(data)
+    print()
     return render(request, "car.html")
 
 
