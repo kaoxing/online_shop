@@ -99,60 +99,81 @@ def cart_post(data):
     if isinstance(data, list):
         # 若data为数组类型，则为购买
         shopper_num = data[0][0]
+        # 查用户钱包
         sql = "select shopper_money from shopper_table where shopper_num = '{0}'".format(shopper_num)
-        cursor.execute(sql)  # 查用户钱包
+        cursor.execute(sql)  
         result = cursor.fetchall()
         shopper_money = to_money(result[0][0])
-        print(shopper_money)
+        # 购买验证
         total_money = 0
         for i in data[1:]:
+            # 获取商品号
             goods_num = i.get("goods_num")
-            sql = "select goods_price,cart_number from cart_view where shopper_num = '{0}' and goods_num = '{1}'".format(
-                shopper_num, goods_num)
-            cursor.execute(sql)  # 查价格和数量
+            # 查商品的价格和购买数量
+            sql = "select goods_price,cart_number from cart_view where goods_num = '{0}'".format(goods_num)
+            cursor.execute(sql)  
             result = cursor.fetchall()
             goods_price = to_money(result[0][0])
             content_number = result[0][1]
-            money = goods_price * content_number  # 计算价格
-            total_money += money  # 计算总价
-        print(total_money)
+            # 查商品的库存量
+            sql = "select inventory_amount from inventory_table where goods_num = '{0}'".format(goods_num)
+            cursor.execute(sql)  
+            result= cursor.fetchall()
+            inventory_amount = result[0][0]
+            # 判断库存是否充足
+            if inventory_amount < content_number:
+                # 如果库存不充足
+                return "{0}库存不足".format(goods_num)
+            else:
+                # 如果库存充足
+                money = goods_price * content_number  # 计算价格
+                total_money += money  # 计算总价
+        # 判断用户余额是否充足
         if shopper_money < total_money:
-            # 用户余额不足
-            return False
+            # 如果用户余额不足
+            return "用户余额不足"
         else:
-            # 用户余额充足
+            # 如果用户余额充足，此时生成订单
+            # 向订单表插入订单信息
             order_num = 'order' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成订单号
             order_address = data[0][1]
-            sql = "insert into order_table values('{0}',now()+'8:00','{1}','{2}')".format(order_num, shopper_num,
-                                                                                          order_address)
-            cursor.execute(sql)  # 插订单表
+            sql = "insert into order_table values('{0}',now()+'8:00','{1}','{2}')".format(order_num, shopper_num,order_address)
+            cursor.execute(sql)  
+            # 用户钱包更新
             sql = "update shopper_table set shopper_money = shopper_money - money({0}) where shopper_num = '{1}'".format(
                 total_money, shopper_num)
-            cursor.execute(sql)  # 用户钱包更新
+            cursor.execute(sql)  
+            # 商家钱包更新（确认收货时更新）
             # sql = "update shop_table set shop_money = shop_money + money({0})".format(total_money)
-            # cursor.execute(sql)# 商家钱包更新
+            # cursor.execute(sql)
             for i in data[1:]:
                 goods_num = i.get("goods_num")
-                sql = "insert into content_table values('{0}','{1}',{2},'待发货')".format(order_num, goods_num,
-                                                                                          content_number)
-                cursor.execute(sql)  # 插包含表
-                sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
-                                                                                                      goods_num)
-                cursor.execute(sql)  # 删购物车表
-            return True
+                # 查商品的购买数量
+                sql = "select cart_number from cart_view where goods_num = '{0}'".format(goods_num)
+                cursor.execute(sql)  
+                result = cursor.fetchall()
+                cart_number = result[0][0]
+                # 向包含表里插入订单包含信息
+                sql = "insert into content_table values('{0}','{1}',{2},'待发货')".format(order_num, goods_num,cart_number)
+                cursor.execute(sql)
+                # 删购物车表中对应元组
+                sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+                cursor.execute(sql)
+                # 更新商家的库存表
+                sql = "update inventory_table set inventory_amount = inventory_amount - {0},inventory_sold = inventory_sold + {0} where goods_num = '{1}'".format(cart_number,goods_num)
+                cursor.execute(sql)
+            return "下单成功"
     else:
         # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
         ope = data.get("ope")
         shopper_num = data.get('id')
         goods_num = data.get('goods_num')
         goods_number = data.get('goods_number')
-        print(shopper_num, goods_num, goods_number, ope)
         if ope == '数量':
             sql = "update cart_table set cart_number = {0} where shopper_num = '{1}' and goods_num = '{2}'".format(
                 goods_number, shopper_num, goods_num)
         elif ope == '删除':
-            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
-                                                                                                  goods_num)
+            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
         cursor.execute(sql)
 
 
@@ -193,7 +214,6 @@ def mgood_get(id):
     sql = "select * from shop_goods_view where shop_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    # print("rows:",rows)
     list = []
     for row in rows:
         dic = {
@@ -204,7 +224,6 @@ def mgood_get(id):
             'goods_description': row[3],
             'goods_photo': row[5]
         }
-        # print("dic",dic)
         list.append(dic)
     return list
 

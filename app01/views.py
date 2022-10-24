@@ -20,11 +20,10 @@ local = "http://127.0.0.1:8000/"
 
 # Create your views here.
 def login(request):
-    # 用户登录
+    '''用户登录'''
     if request.method == 'GET':
         return render(request, "login.html")
     # 获取接收到的账号和密码
-
     data = request.POST
     id = data.get("user")
     pwd = data.get("pwd")
@@ -34,7 +33,7 @@ def login(request):
         print(pwd)
         return redirect(local + "index/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
     return render(request, "login.html")
-    # todo 这里加一个用户名/密码错误弹窗
+    # TODO 这里加一个用户名/密码错误弹窗
 
 
 def index(request):
@@ -62,6 +61,7 @@ def index(request):
 
 
 def wallet(request):
+    '''用户钱包'''
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -116,7 +116,7 @@ def order(request):
 
 
 def car(request):
-    print()
+    '''购物车'''
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -127,7 +127,6 @@ def car(request):
     data = request.body
     data = json.loads(data)
     tls.cart_post(data)
-    print()
     return render(request, "car.html")
 
 
