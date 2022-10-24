@@ -97,43 +97,48 @@ def cart_show(id):
 
 def cart_post(data):
     if isinstance(data, list):
-        #若data为数组类型，则为购买
+        # 若data为数组类型，则为购买
         shopper_num = data[0][0]
         sql = "select shopper_money from shopper_table where shopper_num = '{0}'".format(shopper_num)
-        cursor.execute(sql)# 查用户钱包
+        cursor.execute(sql)  # 查用户钱包
         result = cursor.fetchall()
         shopper_money = to_money(result[0][0])
         print(shopper_money)
         total_money = 0
         for i in data[1:]:
             goods_num = i.get("goods_num")
-            sql = "select goods_price,cart_number from cart_view where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
-            cursor.execute(sql)# 查价格和数量
+            sql = "select goods_price,cart_number from cart_view where shopper_num = '{0}' and goods_num = '{1}'".format(
+                shopper_num, goods_num)
+            cursor.execute(sql)  # 查价格和数量
             result = cursor.fetchall()
             goods_price = to_money(result[0][0])
             content_number = result[0][1]
-            money = goods_price * content_number#计算价格
-            total_money += money#计算总价
+            money = goods_price * content_number  # 计算价格
+            total_money += money  # 计算总价
         print(total_money)
         if shopper_money < total_money:
-            #用户余额不足
+            # 用户余额不足
             return False
         else:
-            #用户余额充足
+            # 用户余额充足
             order_num = 'order' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成订单号
             order_address = data[0][1]
-            sql = "insert into order_table values('{0}',now()+'8:00','{1}','{2}')".format(order_num, shopper_num, order_address)
-            cursor.execute(sql) # 插订单表
-            sql = "update shopper_table set shopper_money = shopper_money - money({0}) where shopper_num = '{1}'".format(total_money,shopper_num)
-            cursor.execute(sql)# 用户钱包更新
+            sql = "insert into order_table values('{0}',now()+'8:00','{1}','{2}')".format(order_num, shopper_num,
+                                                                                          order_address)
+            cursor.execute(sql)  # 插订单表
+            sql = "update shopper_table set shopper_money = shopper_money - money({0}) where shopper_num = '{1}'".format(
+                total_money, shopper_num)
+            cursor.execute(sql)  # 用户钱包更新
             # sql = "update shop_table set shop_money = shop_money + money({0})".format(total_money)
             # cursor.execute(sql)# 商家钱包更新
             for i in data[1:]:
                 goods_num = i.get("goods_num")
-                sql = "insert into content_table values('{0}','{1}',{2},'待发货')".format(order_num, goods_num, content_number)
-                cursor.execute(sql)# 插包含表
-                sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
-                cursor.execute(sql)# 删购物车表
+                sql = "insert into content_table values('{0}','{1}',{2},'待发货')".format(order_num, goods_num,
+                                                                                          content_number)
+                cursor.execute(sql)  # 插包含表
+                sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
+                                                                                                      goods_num)
+                cursor.execute(sql)  # 删购物车表
             return True
     else:
         # 注意，在地址操作时，数量为空，数量操作时，地址为空，购买时，都不为空
@@ -146,11 +151,15 @@ def cart_post(data):
             sql = "update cart_table set cart_number = {0} where shopper_num = '{1}' and goods_num = '{2}'".format(
                 goods_number, shopper_num, goods_num)
         elif ope == '删除':
-            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
+                                                                                                  goods_num)
         cursor.execute(sql)
 
 
 def index_search(info, way):
+    # todo 需要商品评论,即在list增加一项 "goods_comment":[...],这里需要后面是评论内容,需要按时间排序,具体某一项格式如下
+    # todo ... = "2022-10-24 11:11:12 买家1(shopper123): 伊雷娜很好，孩子很喜欢，已经🐍了"
+    # 即格式为 “{0} {1}({2}):{3}”.format(evaluation_time,shopper_name,shopper_num,evaluation_information)
     if way == '1':
         sql = "select * from goods_view where goods_name like '%{0}%'".format(info)
     elif way == '2':
@@ -229,7 +238,7 @@ def shopper_find_money(id):
     cursor.execute(sql)
     rows = cursor.fetchall()
     print(sql, rows)
-    if len(rows) == 0:
+    if len(rows[0]) == 0:
         return 0
     money = rows[0][0]
     money = money.replace(",", '')
@@ -260,7 +269,7 @@ def shop_find_money(id):
     cursor.execute(sql)
     rows = cursor.fetchall()
     print(sql, rows)
-    if len(rows) == 0:
+    if len(rows[0]) == 0:
         return 0
     money = rows[0][0]
     money = money.replace(",", '')
@@ -270,13 +279,14 @@ def shop_find_money(id):
         return money[1:]
 
 
-def to_money(money:str):
+def to_money(money: str):
     money = money.replace(",", '')
     if money[0] == '-':
         money = '-' + money[2:]
     else:
         money = money[1:]
     return float(money)
+
 
 def shop_add_money(id, pwd, cMoney):
     # 商家充值
@@ -316,6 +326,7 @@ def shop_get_des(id):
 
 
 def shopper_order_get(id):
+    # 用户订单查询
     sql = "select * from shopper_order_view where shopper_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -339,7 +350,9 @@ def shopper_order_get(id):
         order_list.append(dic)
     return order_list
 
+
 def shop_order_get(id):
+    # 商家订单查询
     sql = "select * from shop_order_view where shop_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -381,7 +394,32 @@ def timestamp_to_time(timestamp):
 
 
 def shopper_receive(data):
+    # 用户收货
     goods_num = data.get("goods_num")
     order_num = data.get("order_num")
-    sql = "update content_table set content_status = '已收货' where order_num = '{0}' and goods_num = '{1}'".format(order_num,goods_num)
+    sql = "update content_table set content_status = '已收货' where order_num = '{0}' and goods_num = '{1}'".format(
+        order_num, goods_num)
     cursor.execute(sql)
+    sql = "select shop_num,content_number,goods_price from shop_order_view where order_num = '{0}' and goods_num = '{1}'"\
+        .format(order_num, goods_num)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    if len(rows[0]) == 0:
+        return
+    money = to_money(rows[0][2]) * int(rows[0][1])
+    print(money)
+    sql = "update shop_table set shop_money = shop_money + money({0}) where shop_num = '{1}'".format(money, rows[0][0])
+    cursor.execute(sql)
+
+
+def shop_send_order(data):
+    # 商家发货
+    goods_num = data.get('goods_num')
+    order_num = data.get('order_num')
+    sql = "update content_table set content_status = '已发货' where goods_num = '{0}' and order_num = '{1}'".format(goods_num, order_num)
+    cursor.execute(sql)
+
+def shop_cancel_order(data):
+    # todo 商家取消订单，买家的钱原数奉还
+    goods_num = data.get('goods_num')
+    order_num = data.get('order_num')

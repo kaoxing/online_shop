@@ -148,6 +148,10 @@ def sorder(request):
     order_statu = data.get('statu')
     print(goods_num, order_num, order_statu, ope)
     # todo 通过上述参数在数据库中修改
+    if ope == "发货":
+        tls.shop_send_order(data)
+    elif ope == "取消":
+        tls.shop_cancel_order()
     return render(request, "sorder.html")
 
 

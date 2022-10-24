@@ -10,8 +10,10 @@ SELECT goods_table.*, shop_table.shop_name,shop_table.shop_num,shop_table.shop_d
  WHERE goods_table.goods_num = inventory_table.goods_num
    AND shop_table.shop_num = inventory_table.shop_num;
    
-CREATE VIEW shopper_order_view (shopper_num,order_num,content_number,goods_name,shop_name,shop_num,goods_num,order_time,goods_photo) AS
-SELECT shopper_table.shopper_num, order_table.order_num, content_table.content_number, goods_table.goods_name, shop_table.shop_name, shop_table.shop_num, goods_table.goods_num, order_table.order_time, goods_picture
+CREATE VIEW shopper_order_view (shopper_num,order_num,content_number,goods_name,shop_name,shop_num,goods_num,order_time,goods_photo,user_address,status,goods_price) AS
+SELECT shopper_table.shopper_num, order_table.order_num, content_table.content_number, goods_table.goods_name,
+shop_table.shop_name, shop_table.shop_num, goods_table.goods_num, order_table.order_time, goods_picture,
+order_table.order_address,content_status,goods_price
   FROM shopper_table, order_table, content_table, inventory_table, shop_table, goods_table
  WHERE shopper_table.shopper_num = order_table.shopper_num
    AND order_table.order_num = content_table.order_num
