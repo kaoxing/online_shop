@@ -133,11 +133,16 @@
                     }).catch(function(err) {
                         // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
                     });
+                }else{
+                    alert("必须为待发货物品！")
                 }
 
             },
             refunds:function (index,row){
-                if(row.statu != "待发货")return;
+                if(row.statu != "待发货") {
+                    alert("必须为待发货物品！")
+                    return;
+                }
                 load.ope = "取消";
                 load.statu = "已取消";
                 load.goods_num = row.goods_num;

@@ -62,7 +62,6 @@ def index(request):
     return JsonResponse({"data": order_list})
 
 
-
 def wallet(request):
     '''用户钱包'''
     if request.method == 'GET':
@@ -129,7 +128,12 @@ def car(request):
         return render(request, "car.html", {'name': name, 'id': id, 'pwd': pwd, 'List': json.dumps(cart_list)})
     data = request.body
     data = json.loads(data)
-    tls.cart_post(data)
+    result = tls.cart_post(data)
+    print(result)
+    if result == "用户余额不足":
+        return JsonResponse({"data": result, "res": "余额不足"})
+    elif result[-4:] == "库存不足":
+        return JsonResponse({"data": result, "res": "库存不足"})
     return render(request, "car.html")
 
 
@@ -153,7 +157,7 @@ def sorder(request):
     if ope == "发货":
         tls.shop_send_order(data)
     elif ope == "取消":
-        tls.shop_cancel_order()
+        tls.shop_cancel_order(data)
     return render(request, "sorder.html")
 
 

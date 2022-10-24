@@ -119,6 +119,7 @@
         order_address:"",
         ope:"",
     }
+    let flag=true;
     let pack=[];
     let dataBag=[];
     const local="http://localhost:8000/";
@@ -138,6 +139,7 @@
             show3:false,
             photo_url:"",
             n:0,
+
         },
         methods:{
             goIndex:function(){
@@ -188,9 +190,17 @@
                 body: JSON.stringify(dataBag)
                 }).then(function(response) {
                     // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                    window.location.replace(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}')
+                    return response.json();
+                }).then(function(responseJson) {
+                    temp=responseJson.data;
+                    res=responseJson.res;
+                    if(res == "库存不足"||res == "余额不足"){
+                        alert(temp);
+                    }
+                    flag = false;
                 }).catch(function(err) {
-                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                }).finally(function() {
+                     if(flag) window.location.replace(local+'car/?name={{name}}&id={{id}}&pwd={{pwd}}')
                 });
 
             },
@@ -218,28 +228,6 @@
                 this.dialogVisible1 = false;
                 // console.log(this.diaglogVisible)
             },
-            // changeAdd:function (){
-            //     let index = i, row = j;
-            //
-            //     this.dialogVisible1 = false;
-            //     load.ope = "地址";
-            //     load.goods_num = row.goods_num;
-            //     load.order_address = this.add;
-            //     fetch('http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}', {
-            //         method: 'POST',
-            //         mode: 'cors',
-            //         headers: {
-            //             'Content-Type': 'application/json',
-            //         },
-            //         body: JSON.stringify(load)
-            //         }).then(function(response) {
-            //             // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-            //             window.location.replace("http://localhost:8000/car/?name={{name}}&id={{id}}&pwd={{pwd}}")
-            //         }).catch(function(err) {
-            //             // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
-            //         });
-            //
-            // },
             setDialog2:function(index,row){
                 this.dialogVisible2 = true;
                 i=index;j=row;

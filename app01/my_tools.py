@@ -457,6 +457,22 @@ def shop_send_order(data):
 
 
 def shop_cancel_order(data):
-    # todo 商家取消订单，买家的钱原数奉还
     goods_num = data.get('goods_num')
     order_num = data.get('order_num')
+    sql = "select shopper_num,content_number,goods_price from shopper_order_view " \
+          "where order_num = '{0}' and goods_num = '{1}'" \
+        .format(order_num, goods_num)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    if len(rows[0]) == 0:
+        return
+    money = to_money(rows[0][2]) * int(rows[0][1])
+    sql = "update shopper_table set " \
+          "shopper_money = shopper_money + money({0}) where shopper_num = '{1}'".format(money, rows[0][0])
+    cursor.execute(sql)
+    sql = "delete from content_table where goods_num = '{0}' and order_num = '{1}'".format(goods_num, order_num)
+    cursor.execute(sql)
+    sql = "update inventory_table set inventory_amount = inventory_amount + {0},inventory_sold = inventory_sold - {0} " \
+          "where goods_num = '{1}'".format(rows[0][1], goods_num)
+    cursor.execute(sql)
+
