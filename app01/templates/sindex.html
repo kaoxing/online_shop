@@ -66,6 +66,7 @@
         <el-table-column label="操作" prop="action" align="center">
           <div  slot-scope="scope">
             <el-button type="primary" @click="showDialog(scope.$index, scope.row)">查看商品详情</el-button>
+              <el-button type="primary" @click="getComment(scope.$index, scope.row)">查看商品评论</el-button>
           </div>
         </el-table-column>
     </el-table>
@@ -87,17 +88,52 @@
     <el-button type="primary" @click="closeDialog">确 定</el-button>
     </span>
     </el-dialog>
+    <el-dialog
+    title="商品评论"
+    :visible.sync="dialogVisible1"
+    width="52%"
+    :show-close="show">
+     <el-table
+      :data="evaluationTable"
+      style="width: 100%">
+      <el-table-column
+        prop="evaluation_time"
+        label="评论时间"
+        width="200">
+      </el-table-column>
+        <el-table-column
+        prop="shopper_num"
+        label="评论账号"
+        width="200">
+      </el-table-column>
+        <el-table-column
+        prop="shopper_name"
+        label="名称"
+        width="200">
+      </el-table-column>
+     <el-table-column
+        prop="evaluation_information"
+        label="评论信息"
+        width="355">
+      </el-table-column>
+    </el-table>
+    <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="closeDialog1">确 定</el-button>
+    </span>
+    </el-dialog>
 </div>
 <script>
     let table=[];
-    let load={info:"", way:""};
+    let load={info:"", way:"", goods_num:""};
     let temp;
     let user_msg={name:"{{name}}",id:"{{id}}",pwd:"{{pwd}}"};
+    let evaTable=[]
     const local="http://localhost:8000/";
     let search=new Vue({
         el:"#app",
         data:{
             dataTable:table,
+            evaluationTable:evaTable,
             dialogVisible: false,
             goods_show:"",
             shopper_show:"",
@@ -105,6 +141,7 @@
             searinfo:"",
             radio:"1",
             photo_url:'',
+            dialogVisible1: false,
         },
         methods:{
             closeDialog:function(){
@@ -116,7 +153,6 @@
                 this.photo_url = table[index].goods_photo;
                 this.dialogVisible = true;
             },
-
             sear:function(){
                 load.info=this.searinfo;
                 if(load.info == ""){
@@ -140,6 +176,33 @@
                         let i = 0;
                         for(;i<temp.length;i++){
                             table.push(temp[i]);
+                            // console.log(temp[i]);
+                        }
+                    });
+            },
+            closeDialog1:function(){
+                this.dialogVisible1 = false;
+            },
+            getComment:function(index,row){
+                load.way = "查看评论";
+                load.goods_num = row.goods_num;
+                let sear_url = local+"sindex/?name={{name}}&id={{id}}&pwd={{pwd}}";
+                this.dialogVisible1 = true;
+                fetch(sear_url, {
+                        method: 'POST',
+                        mode:'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                          },
+                        body:JSON.stringify(load)
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(responseJson) {
+                        temp=responseJson.data;
+                        evaTable.splice(0,evaTable.length);
+                        let i = 0;
+                        for(;i<temp.length;i++){
+                            evaTable.push(temp[i]);
                             // console.log(temp[i]);
                         }
                     });

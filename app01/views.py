@@ -55,9 +55,12 @@ def index(request):
     order_list = []
     if way == '加购物车':
         tls.add_cart(id, goods_num)
+    elif way == '查看评论':
+        order_list = tls.index_goods_evaluation(data)
     else:
         order_list = tls.index_search(info, way)
     return JsonResponse({"data": order_list})
+
 
 
 def wallet(request):
@@ -184,7 +187,10 @@ def sindex(request):
     # todo 判断是去个人中心还是搜索
     info = data.get("info")
     way = data.get("way")
-    order_list = tls.index_search(info, way)
+    if way == '查看评论':
+        order_list = tls.index_goods_evaluation(data)
+    else:
+        order_list = tls.index_search(info, way)
     return JsonResponse({"data": order_list})
 
 

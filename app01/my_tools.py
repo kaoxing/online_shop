@@ -30,7 +30,7 @@ def shopper_exist(id, pwd):
 def shop_exist(id, pwd):
     # 商家登录,pwd = coder.decode(pwd,id)，返回None则不存在
     sql = "select * from shop_table where shop_num='{}'".format(id)
-    print(sql)
+    # print(sql)
     cursor.execute(sql)
     rows = cursor.fetchall()
     if len(rows) != 0 and rows[0][2] == pwd:
@@ -178,14 +178,6 @@ def cart_post(data):
 
 
 def index_search(info, way):
-    # todo 需要商品评论,即在list增加一项 "goods_comment":[...],这里需要后面是评论内容,需要按时间排序,具体某一项格式如下
-    # todo ... = {
-    #       evaluation_time:"2022-10-24 20:47:24",
-    #       shopper_num:"shopperXYZ",
-    #       shopper_name:"兴兴",
-    #       evaluation_information:"伊雷娜很好，孩子很喜欢，已经🐍了",
-    #  }
-    # 即格式为 “{0} {1}({2}):{3}”.format(evaluation_time,shopper_name,shopper_num,evaluation_information)
     if way == '1':
         sql = "select * from goods_view where goods_name like '%{0}%'".format(info)
     elif way == '2':
@@ -208,6 +200,25 @@ def index_search(info, way):
         }
         list.append(dic)
     return list
+
+
+def index_goods_evaluation(data):
+    goods_num = data.get("goods_num")
+    sql = "select * from evaluation_view where goods_num = '{0}'".format(goods_num)
+    cursor.execute(sql)
+    table = []
+    rows = cursor.fetchall()
+    print(rows)
+    for row in rows:
+        dic = {
+            'shopper_name': row[0],
+            'shopper_num': row[1],
+            'order_num': row[2],
+            'evaluation_time': timestamp_to_time(row[4]),
+            'evaluation_information': row[5],
+        }
+        table.append(dic)
+    return table
 
 
 def mgood_get(id):
@@ -424,7 +435,7 @@ def shopper_receive(data):
     sql = "update content_table set content_status = '已收货' where order_num = '{0}' and goods_num = '{1}'".format(
         order_num, goods_num)
     cursor.execute(sql)
-    sql = "select shop_num,content_number,goods_price from shop_order_view where order_num = '{0}' and goods_num = '{1}'"\
+    sql = "select shop_num,content_number,goods_price from shop_order_view where order_num = '{0}' and goods_num = '{1}'" \
         .format(order_num, goods_num)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -440,8 +451,10 @@ def shop_send_order(data):
     # 商家发货
     goods_num = data.get('goods_num')
     order_num = data.get('order_num')
-    sql = "update content_table set content_status = '已发货' where goods_num = '{0}' and order_num = '{1}'".format(goods_num, order_num)
+    sql = "update content_table set content_status = '已发货' where goods_num = '{0}' and order_num = '{1}'".format(
+        goods_num, order_num)
     cursor.execute(sql)
+
 
 def shop_cancel_order(data):
     # todo 商家取消订单，买家的钱原数奉还
