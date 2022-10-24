@@ -70,9 +70,9 @@ def wallet(request):
         id = data.get('id')
         name = data.get('name')
         pwd = data.get('pwd')
-        # todo 此处查询用户余额
+        #此处查询用户余额
         money = "{0}".format(tls.shopper_find_money(id))
-        print(money, tls.shopper_find_money(id))
+        # print(money, tls.shopper_find_money(id))
 
         return render(request, "wallet.html", {'name': name, 'id': id, 'pwd': pwd, 'money': money})
     data = json.loads(request.body)
@@ -84,7 +84,7 @@ def wallet(request):
     print("pwd", pwd)
     m = data.get("m")
     print("here")
-    # todo 此处通过cMoney改余额,若m==“add"则充值，否则提现
+    #此处通过cMoney改余额,若m==“add"则充值，否则提现
     if m == "add":
         tls.shopper_add_money(id, coder.decode(pwd, id), cMoney)
     else:
@@ -104,8 +104,8 @@ def order(request):
     data = request.body
     data = json.loads(data)
     ope = data.get("ope")
-    print(data)
-    print(ope)
+    # print(data)
+    # print(ope)
     print(ope == "评论")
     # todo 通过ope的值确定操作类型,"评论","退货","收货"
     if ope == "评论":
