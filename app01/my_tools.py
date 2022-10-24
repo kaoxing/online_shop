@@ -158,7 +158,12 @@ def cart_post(data):
 
 def index_search(info, way):
     # todo 需要商品评论,即在list增加一项 "goods_comment":[...],这里需要后面是评论内容,需要按时间排序,具体某一项格式如下
-    # todo ... = "2022-10-24 11:11:12 买家1(shopper123): 伊雷娜很好，孩子很喜欢，已经🐍了"
+    # todo ... = {
+    #       evaluation_time:"2022-10-24 20:47:24",
+    #       shopper_num:"shopperXYZ",
+    #       shopper_name:"兴兴",
+    #       evaluation_information:"伊雷娜很好，孩子很喜欢，已经🐍了",
+    #  }
     # 即格式为 “{0} {1}({2}):{3}”.format(evaluation_time,shopper_name,shopper_num,evaluation_information)
     if way == '1':
         sql = "select * from goods_view where goods_name like '%{0}%'".format(info)
