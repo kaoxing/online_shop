@@ -1,0 +1,16 @@
+/app01/*.pyc
+*.pyc
+/online_shop/*.pyc
+/app01/__pycache__/*.pyc
+app01/__pycache__/__init__.cpython-39.pyc
+app01/__pycache__/admin.cpython-39.pyc
+app01/__pycache__/apps.cpython-39.pyc
+app01/__pycache__/coder.cpython-39.pyc
+app01/__pycache__/models.cpython-39.pyc
+app01/__pycache__/my_tools.cpython-39.pyc
+app01/__pycache__/views.cpython-39.pyc
+app01/migrations/__pycache__/__init__.cpython-39.pyc
+online_shop/__pycache__/__init__.cpython-39.pyc
+online_shop/__pycache__/settings.cpython-39.pyc
+online_shop/__pycache__/urls.cpython-39.pyc
+online_shop/__pycache__/wsgi.cpython-39.pyc
