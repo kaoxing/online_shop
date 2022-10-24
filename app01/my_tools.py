@@ -3,6 +3,7 @@ import os
 from pydoc import describe
 import random
 from tokenize import Double
+from unittest import result
 import coder
 import re
 from pathlib import Path
@@ -426,6 +427,30 @@ def shopper_comment(data):
 
 def timestamp_to_time(timestamp):
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
+
+def shopper_refund(data):
+    print(data)
+    order_num = data.get("order_num")
+    goods_num = data.get("goods_num")
+    # 用户订单查询
+    sql = "select shopper_num,content_number,goods_price from shopper_order_view where order_num = '{0}' and goods_num = '{1}'".format(order_num,goods_num)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    shopper_num = rows[0][0]
+    content_number = rows[0][1]
+    goods_price = to_money(rows[0][2])
+    total_money = content_number*goods_price
+    # print(shopper_num,content_number,goods_price,total_money)
+    # 用户钱包更新
+    sql = "update shopper_table set shopper_money = shopper_money + money({0}) where shopper_num = '{1}'".format(
+        total_money, shopper_num)
+    cursor.execute(sql)
+    # 更新包含表的订单包含信息
+    sql = "update content_table set content_status = '已退货' where order_num = '{0}' and goods_num = '{1}'".format(order_num, goods_num)
+    cursor.execute(sql)
+    # 更新商家的库存表
+    sql = "update inventory_table set inventory_amount = inventory_amount + {0},inventory_sold = inventory_sold - {0} where goods_num = '{1}'".format(content_number,goods_num)
+    cursor.execute(sql)
 
 
 def shopper_receive(data):
