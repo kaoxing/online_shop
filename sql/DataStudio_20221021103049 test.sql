@@ -10,6 +10,7 @@ INSERT INTO inventory_table VALUES('shop123456','goods12345',200,0);
 INSERT INTO inventory_table VALUES('shop123456','goods12346',198,20);
 
 DELETE FROM cart_table;
+
 DELETE FROM inventory_table;
 DELETE FROM goods_table;
 DELETE FROM shopper_table;
