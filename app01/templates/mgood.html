@@ -223,7 +223,7 @@
                 if(row != '1'){
                     this.Gname = row.goods_name;
                     this.Gnumber = row.inventory_number;
-                    this.Gprice = row.goods_price;
+                    this.Gprice = row.goods_price.slice(1);
                     this.Gdes = row.goods_description;
                     this.Gphoto = row.goods_photo;
                     this.Gnum = row.goods_num;
