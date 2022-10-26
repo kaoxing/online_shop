@@ -39,21 +39,43 @@ def shop_exist(id, pwd):
     return None
 
 
-def save_photo(photo):
-    # print(photo)
-    c = re.sub(r'%0A', "\\n", photo)
-    d = re.sub(r'data:image/png;base64,', "", c)
-    d = re.sub(r'data:image/jpg;base64,', "", d)
-    d = re.sub(r'data:image/jpeg;base64,', "", d)
-    # print(d)
-    photo = base64.b64decode(d)
-    filepath = os.path.join(BASE_DIR, 'app01/static/img/')
-    filename = unique_name(filepath)
-    filepath = filepath + filename  # I assume you have a way of picking unique filenames
-    print(filepath)
-    with open(filepath, 'wb') as f:
-        f.write(photo)
-    return "/static/img/" + filename
+def save_photo(photo,goods_num):
+    # print('photo',photo)
+    if photo == '1' or photo is None:
+        # 如果图片为空
+        return "/static/img/default.jpg"
+    else:
+        # 如果图片不为空，处理照片
+        c = re.sub(r'%0A', "\\n", photo)
+        d = re.sub(r'data:image/png;base64,', "", c)
+        d = re.sub(r'data:image/jpg;base64,', "", d)
+        d = re.sub(r'data:image/jpeg;base64,', "", d)
+        # print(d)
+        photo = base64.b64decode(d)
+        # 处理图片地址
+        filepath = os.path.join(BASE_DIR, 'app01/static/img/')
+        filename = unique_name(filepath)
+        filepath = filepath + filename  # I assume you have a way of picking unique filenames
+        ret = "/static/img/" + filename
+        if goods_num is not None:
+            # 如果是‘修改’操作
+            sql = "select goods_picture from goods_table where goods_num = '{0}'".format(goods_num)
+            cursor.execute(sql)
+            rows = cursor.fetchall()
+            pic_path = rows[0][0]
+            print(pic_path)
+            if pic_path != "/static/img/default.jpg":
+                # 如果不是默认图片
+                # tmp_path = 'app01' + pic_path
+                ret = pic_path
+                filepath = os.path.join(BASE_DIR, 'app01' + pic_path)
+                print(filepath)
+        # 保存图片文件
+        with open(filepath, 'wb') as f:
+                f.write(photo)
+        # print('ret:',ret)
+        # print('filepath:',filepath)
+        return ret
 
 
 def unique_name(path):
@@ -180,9 +202,9 @@ def cart_post(data):
 
 def index_search(info, way):
     if way == '1':
-        sql = "select * from goods_view where goods_name like '%{0}%'".format(info)
+        sql = "select * from goods_view where goods_name like '%{0}%' and inventory_amount <> -1".format(info)
     elif way == '2':
-        sql = "select * from goods_view where shop_name like '%{0}%'".format(info)
+        sql = "select * from goods_view where shop_name like '%{0}%' and inventory_amount <> -1".format(info)
     cursor.execute(sql)
     rows = cursor.fetchall()
     list = []
@@ -223,7 +245,7 @@ def index_goods_evaluation(data):
 
 
 def mgood_get(id):
-    sql = "select * from shop_goods_view where shop_num = '{0}'".format(id)
+    sql = "select * from shop_goods_view where shop_num = '{0}' and inventory_amount <> -1".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
     list = []
@@ -242,30 +264,44 @@ def mgood_get(id):
 
 def mgood_post(data):
     ope = data.get('ope')
-    name = data.get("goods_name")
-    description = data.get("goods_description")
-    price = data.get("goods_price")
-    picture = save_photo(data.get('goods_photo'))
-    amount = data.get("goods_number")
-    shop_num = data.get("id")
-    pwd = data.get('pwd')
-
-    if ope == '上架':
-        goods_num = 'goods' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成商品号
-        sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description, price,
-                                                                                    picture)
-        cursor.execute(sql)
-        sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(shop_num, goods_num, amount, 0)
-        cursor.execute(sql)
-    elif ope == '修改':
+    # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',ope)
+    if ope == '下架':
         goods_num = data.get('goods_num')
-        sql = "update goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= {2},goods_picture= '{3}' where goods_num = '{4}'".format(
-            name, description, price, picture, goods_num)
-        # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!sql:',sql)
+        sql = "update inventory_table set inventory_amount = -1 where goods_num = '{0}'".format(goods_num)
         cursor.execute(sql)
-        sql = "update inventory_table set inventory_amount = {0} where goods_num = '{1}' and shop_num = '{2}'".format(
-            amount, goods_num, shop_num)
-        cursor.execute(sql)
+        # sql = "delete from inventory_table  where goods_num = '{0}'".format(goods_num)
+        # cursor.execute(sql)
+        # sql = "delete from goods_table  where goods_num = '{0}'".format(goods_num)
+        # cursor.execute(sql)
+    else:
+        name = data.get("goods_name")
+        description = data.get("goods_description")
+        price = data.get("goods_price")
+        amount = data.get("goods_number")
+        shop_num = data.get("id")
+        if ope == '上架':
+            goods_num = 'goods' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成商品号
+            picture = save_photo(data.get('goods_photo'),None)
+            sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description, price,
+                                                                                        picture)
+            cursor.execute(sql)
+            sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(shop_num, goods_num, amount, 0)
+            cursor.execute(sql)
+        elif ope == '修改':
+            goods_num = data.get('goods_num')
+            picture = save_photo(data.get('goods_photo'),goods_num)
+            sql = ""
+            if picture == "/static/img/default.jpg":
+                sql = "update goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= {2} where goods_num = '{3}'".format(
+                name, description, price, goods_num)
+            else:
+                sql = "update goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= {2},goods_picture= '{3}' where goods_num = '{4}'".format(
+                name, description, price, picture, goods_num)
+            # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!sql:',sql)
+            cursor.execute(sql)
+            sql = "update inventory_table set inventory_amount = {0} where goods_num = '{1}'".format(
+                amount, goods_num)
+            cursor.execute(sql)
 
 
 def shopper_find_money(id):
@@ -473,7 +509,7 @@ def shopper_receive(data):
 
 
 def shop_send_order(data):
-    # 商家发货
+    '''商家发货'''
     goods_num = data.get('goods_num')
     order_num = data.get('order_num')
     sql = "update content_table set content_status = '已发货' where goods_num = '{0}' and order_num = '{1}'".format(
@@ -482,6 +518,7 @@ def shop_send_order(data):
 
 
 def shop_cancel_order(data):
+    '''商家取消订单'''
     goods_num = data.get('goods_num')
     order_num = data.get('order_num')
     sql = "select shopper_num,content_number,goods_price from shopper_order_view " \
