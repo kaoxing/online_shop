@@ -44,13 +44,12 @@ CONSTRAINT check_order_num CHECK(length(order_num)=10)
 -- 库存表
 CREATE TABLE inventory_table
 (
+goods_num CHAR(10) PRIMARY KEY,                 --商品号
 shop_num CHAR(10),                              --商家账号
-goods_num CHAR(10),                             --商品号
 inventory_amount INT NOT NULL,                  --库存量
 inventory_sold INT NOT NULL,                    --已售库存
-PRIMARY KEY(shop_num,goods_num),
-FOREIGN KEY(shop_num) REFERENCES shop_table(shop_num),
-FOREIGN KEY(goods_num) REFERENCES goods_table(goods_num)
+FOREIGN KEY(goods_num) REFERENCES goods_table(goods_num),
+FOREIGN KEY(shop_num) REFERENCES shop_table(shop_num)
 );
 
 -- 包含表
@@ -84,11 +83,11 @@ FOREIGN KEY(shopper_num) REFERENCES shopper_table(shopper_num),
 FOREIGN KEY(goods_num) REFERENCES goods_table(goods_num)
 );
 
-DROP TABLE cart_table;
-DROP TABLE evaluation_table;
-DROP TABLE content_table;
-DROP TABLE inventory_table;
-DROP TABLE order_table;
-DROP TABLE shopper_table;
-DROP TABLE goods_table;
-DROP TABLE shop_table;
+--DROP TABLE cart_table;
+--DROP TABLE evaluation_table;
+--DROP TABLE content_table;
+--DROP TABLE inventory_table;
+--DROP TABLE order_table;
+--DROP TABLE shopper_table;
+--DROP TABLE goods_table;
+--DROP TABLE shop_table;
