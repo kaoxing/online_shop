@@ -2,8 +2,10 @@
 ### Example user template
 
 # IntelliJ project files
-.idea
-*.iml
-out
-gen
-.*pyc
+/.idea
+/*.iml
+/out
+/gen
+/online_shop/__pycache__
+/app01/__pycache__
+/app01/migrations/__pycache__
