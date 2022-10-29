@@ -18,6 +18,10 @@ local = "http://127.0.0.1:8000/"
 
 
 # Create your views here.
+
+def home(request):
+    return render(request, "Home.html")
+
 def login(request):
     '''用户登录'''
     if request.method == 'GET':

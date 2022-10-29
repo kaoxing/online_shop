@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <style>
+        .bg{
+            background-image:url("{% static 'images/background.jpg'%}");
+        }
+    </style>
+</head>
+<body class="bg">
+<script src="{% static '/js/vue.js'%}"></script>
+<script src="{% static '/js/element-ui/lib/index.js'%}"></script>
+<link rel="stylesheet" href="{% static '/js/element-ui/lib/theme-chalk/index.css'%}">
+<div id = "app">
+<div  style="text-align:center">
+    <h1>商城购物系统</h1>
+</div>
+<div style="text-align:center">
+<el-button @click="goLogin" style="width:30%;margin-bottom:15px;">
+    我是买家
+</el-button>
+</div>
+    <div style="text-align:center">
+    <el-button @click="goSlogin" style="width:30%;margin-bottom:15px;">
+    我是商家
+</el-button>
+    </div>
+</div>
+<script>
+    const local = 'http://localhost:8000/';
+    new Vue({
+        el: "#app",
+        methods: {
+            goLogin:function(){
+                let index_url = local+'login/';
+                fetch(index_url, {
+                        method: 'GET',
+                    }).then(function(response) {
+                        // console.log(response)
+                        window.location.replace(index_url)
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+            goSlogin:function(){
+                let index_url = local+'slogin/';
+                fetch(index_url, {
+                        method: 'GET',
+                    }).then(function(response) {
+                        // console.log(response)
+                        window.location.replace(index_url)
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+        }
+    })
+</script>
+</body>
+
+</html>

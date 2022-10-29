@@ -31,5 +31,6 @@ urlpatterns = [
     path("sindex/", views.sindex),
     path("swallet/", views.swallet),
     path("mgood/", views.mgood),
-    path("ssetting/", views.ssetting)
+    path("ssetting/", views.ssetting),
+    path("Home/", views.home)
 ]
