@@ -5,7 +5,7 @@ import os
 import requests
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
-
+from django.contrib import messages
 current_directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_directory)
 
@@ -30,7 +30,8 @@ def login(request):
     if name is not None:
         pwd = coder.encode(pwd, id)
         return redirect(local + "index/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
-    return render(request, "login.html")
+    messages.success(request, "账号或密码错误")
+    return redirect(local + "login/")
     # TODO 这里加一个用户名/密码错误弹窗
 
 
@@ -158,7 +159,8 @@ def slogin(request):
     if name is not None:
         pwd = coder.encode(pwd, id)
         return redirect(local + "sindex/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
-    return render(request, "slogin.html")
+    messages.success(request, "账号或密码错误")
+    return redirect(local + "slogin/")
     # todo 这里加一个用户名/密码错误弹窗
 
 
