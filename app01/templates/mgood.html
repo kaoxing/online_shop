@@ -45,6 +45,11 @@
         width="190">
       </el-table-column>
         <el-table-column
+        prop="inventory_sold"
+        label="已售数量"
+        width="190">
+      </el-table-column>
+        <el-table-column
         prop="goods_description"
         label="商品描述"
         width="320">
@@ -144,7 +149,8 @@
     let i,j;
     let table={{ List|safe }};
     id = "{{id}}";
-    const local = "http://localhost:8000/"
+    const local = "{}http://localhost:8000/"
+    // const local = "http://121.36.195.125:8000/"
     let evaTable = []
     let load={
         id:"{{id}}",

@@ -14,11 +14,12 @@ import time
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-cursor = connection.cursor()
+
 
 
 def shopper_exist(id, pwd):
     # 用户登录，pwd = coder.decode(pwd,id)，返回为None则不存在
+    cursor = connection.cursor()
     sql = "select * from shopper_table where shopper_num='{}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -29,6 +30,7 @@ def shopper_exist(id, pwd):
 
 def shop_exist(id, pwd):
     # 商家登录,pwd = coder.decode(pwd,id)，返回None则不存在
+    cursor = connection.cursor()
     sql = "select * from shop_table where shop_num='{}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -38,6 +40,7 @@ def shop_exist(id, pwd):
 
 
 def save_photo(photo,goods_num):
+    cursor = connection.cursor()
     if photo == '1' or photo is None:
         # 如果图片为空
         return "/static/img/default.jpg"
@@ -75,6 +78,7 @@ def unique_name(path):
 
 
 def add_cart(id, goods_num):
+    cursor = connection.cursor()
     sql = "select * from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(id, goods_num)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -87,6 +91,7 @@ def add_cart(id, goods_num):
 
 
 def cart_show(id):
+    cursor = connection.cursor()
     sql = "select * from cart_view where shopper_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -110,6 +115,7 @@ def cart_show(id):
 
 
 def cart_post(data):
+    cursor = connection.cursor()
     if isinstance(data, list):
         # 若data为数组类型，则为购买
         shopper_num = data[0][0]
@@ -189,6 +195,7 @@ def cart_post(data):
 
 
 def index_search(info, way):
+    cursor = connection.cursor()
     if way == '1':
         sql = "select * from goods_view where goods_name like '%{0}%' and inventory_amount <> -1".format(info)
     elif way == '2':
@@ -214,6 +221,7 @@ def index_search(info, way):
 
 
 def index_goods_evaluation(data):
+    cursor = connection.cursor()
     goods_num = data.get("goods_num")
     sql = "select * from evaluation_view where goods_num = '{0}'".format(goods_num)
     cursor.execute(sql)
@@ -232,6 +240,7 @@ def index_goods_evaluation(data):
 
 
 def mgood_get(id):
+    cursor = connection.cursor()
     sql = "select * from shop_goods_view where shop_num = '{0}' and inventory_amount <> -1".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -251,6 +260,7 @@ def mgood_get(id):
 
 
 def mgood_post(data):
+    cursor = connection.cursor()
     ope = data.get('ope')
     if ope == '下架':
         goods_num = data.get('goods_num')
@@ -292,6 +302,7 @@ def mgood_post(data):
 
 def shopper_find_money(id):
     # 查询用户余额
+    cursor = connection.cursor()
     sql = "select shopper_money from shopper_table where shopper_num='{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -307,6 +318,7 @@ def shopper_find_money(id):
 
 def shopper_add_money(id, pwd, cMoney):
     # 用户充值
+    cursor = connection.cursor()
     sql = "UPDATE shopper_table set shopper_money = shopper_money + money({2}) " \
           "WHERE shopper_num = '{0}' AND shopper_password = '{1}';".format(id, pwd, cMoney)
     cursor.execute(sql)
@@ -314,6 +326,7 @@ def shopper_add_money(id, pwd, cMoney):
 
 def shopper_sub_money(id, pwd, cMoney):
     # 用户提现
+    cursor = connection.cursor()
     sql = "UPDATE shopper_table set shopper_money = shopper_money - money({2}) " \
           "WHERE shopper_num = '{0}' AND shopper_password = '{1}';".format(id, pwd, cMoney)
     cursor.execute(sql)
@@ -321,6 +334,7 @@ def shopper_sub_money(id, pwd, cMoney):
 
 def shop_find_money(id):
     # 查询商家余额
+    cursor = connection.cursor()
     sql = "select shop_money from shop_table where shop_num='{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -345,6 +359,7 @@ def to_money(money: str):
 
 def shop_add_money(id, pwd, cMoney):
     # 商家充值
+    cursor = connection.cursor()
     sql = "UPDATE shop_table set shop_money = shop_money + money({2}) " \
           "WHERE shop_num = '{0}' AND shop_password = '{1}';".format(id, pwd, cMoney)
     cursor.execute(sql)
@@ -352,6 +367,7 @@ def shop_add_money(id, pwd, cMoney):
 
 def shop_sub_money(id, pwd, cMoney):
     # 商家提现
+    cursor = connection.cursor()
     sql = "UPDATE shop_table set shop_money = shop_money - money({2}) " \
           "WHERE shop_num = '{0}' AND shop_password = '{1}';".format(id, pwd, cMoney)
     cursor.execute(sql)
@@ -359,6 +375,7 @@ def shop_sub_money(id, pwd, cMoney):
 
 def shopper_change_info(id, rName, sPwd, rPwd):
     # 用户账号信息修改
+    cursor = connection.cursor()
     sql = "UPDATE shopper_table set shopper_name = '{0}',shopper_password = '{1}' " \
           "WHERE shopper_num = '{2}' AND shopper_password = '{3}';".format(rName, rPwd, id, sPwd)
     cursor.execute(sql)
@@ -366,6 +383,7 @@ def shopper_change_info(id, rName, sPwd, rPwd):
 
 def shop_change_info(id, rName, sPwd, rPwd, rDes):
     # 用户账号信息修改
+    cursor = connection.cursor()
     sql = "UPDATE shop_table set shop_name = '{0}',shop_password = '{1}',shop_description = '{4}' " \
           "WHERE shop_num = '{2}' AND shop_password = '{3}';".format(rName, rPwd, id, sPwd, rDes)
     cursor.execute(sql)
@@ -373,6 +391,7 @@ def shop_change_info(id, rName, sPwd, rPwd, rDes):
 
 def shop_get_des(id):
     # 获取商家描述
+    cursor = connection.cursor()
     sql = "select shop_description from shop_table where shop_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -381,6 +400,7 @@ def shop_get_des(id):
 
 def shopper_order_get(id):
     # 用户订单查询
+    cursor = connection.cursor()
     sql = "select * from shopper_order_view where shopper_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -406,6 +426,7 @@ def shopper_order_get(id):
 
 def shop_order_get(id):
     # 商家订单查询
+    cursor = connection.cursor()
     sql = "select * from shop_order_view where shop_num = '{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -431,6 +452,7 @@ def shop_order_get(id):
 
 def shopper_comment(data):
     # 用户评论
+    cursor = connection.cursor()
     comment = data.get("commentInfo")
     goods_num = data.get("goods_num")
     order_num = data.get("order_num")
@@ -444,6 +466,7 @@ def timestamp_to_time(timestamp):
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
 def shopper_refund(data):
+    cursor = connection.cursor()
     order_num = data.get("order_num")
     goods_num = data.get("goods_num")
     # 用户订单查询
@@ -468,6 +491,7 @@ def shopper_refund(data):
 
 def shopper_receive(data):
     # 用户收货
+    cursor = connection.cursor()
     goods_num = data.get("goods_num")
     order_num = data.get("order_num")
     sql = "update content_table set content_status = '已收货' where order_num = '{0}' and goods_num = '{1}'".format(
@@ -486,6 +510,7 @@ def shopper_receive(data):
 
 def shop_send_order(data):
     '''商家发货'''
+    cursor = connection.cursor()
     goods_num = data.get('goods_num')
     order_num = data.get('order_num')
     sql = "update content_table set content_status = '已发货' where goods_num = '{0}' and order_num = '{1}'".format(
@@ -495,6 +520,7 @@ def shop_send_order(data):
 
 def shop_cancel_order(data):
     '''商家取消订单'''
+    cursor = connection.cursor()
     goods_num = data.get('goods_num')
     order_num = data.get('order_num')
     sql = "select shopper_num,content_number,goods_price from shopper_order_view " \
