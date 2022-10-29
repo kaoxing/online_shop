@@ -53,7 +53,7 @@
           <div  slot-scope="scope">
               <el-button type="primary" @click="setDialog2(scope.row)">查看图片</el-button>
               <el-button type="primary" @click="setDialog1(scope.row)">修改商品信息</el-button>
-              <el-button type="primary" @click="setDialog2(scope.$index, scope.row)">查看商品评论</el-button>
+              <el-button type="primary" @click="getComment(scope.$index, scope.row)">查看商品评论</el-button>
               <el-button type="danger" @click="deletef(scope.$index, scope.row)">下架</el-button>
           </div>
         </el-table-column>
@@ -106,18 +106,53 @@
     <el-button type="primary" @click="cancel2">确 定</el-button>
     </span>
     </el-dialog>
+     <el-dialog
+    title="商品评论"
+    :visible.sync="dialogVisible3"
+    width="52%"
+    :show-close="show">
+     <el-table
+      :data="evaluationTable"
+      style="width: 100%">
+      <el-table-column
+        prop="evaluation_time"
+        label="评论时间"
+        width="200">
+      </el-table-column>
+        <el-table-column
+        prop="shopper_num"
+        label="评论账号"
+        width="200">
+      </el-table-column>
+        <el-table-column
+        prop="shopper_name"
+        label="名称"
+        width="200">
+      </el-table-column>
+     <el-table-column
+        prop="evaluation_information"
+        label="评论信息"
+        width="355">
+      </el-table-column>
+    </el-table>
+    <span slot="footer" class="dialog-footer">
+    <el-button type="primary" @click="cancel3">确 定</el-button>
+    </span>
+    </el-dialog>
 </div>
 <script>
     let i,j;
     let table={{ List|safe }};
     id = "{{id}}";
     const local = "http://localhost:8000/"
+    let evaTable = []
     let load={
         id:"{{id}}",
         goods_num:"",
         goods_number:"",
         order_address:"",
         ope:"",
+        way:"",
     }
     let pack={
         id:"{{id}}",
@@ -134,9 +169,11 @@
         data: {
             // checked:false,
             dataTable: table,
+            evaluationTable: evaTable,
             input:"",
             dialogVisible1: false,
             dialogVisible2: false,
+            dialogVisible3: false,
             number:"",
             add:"",
             show1:false,
@@ -243,7 +280,34 @@
                 this.dialogVisible2 = false;
                 // console.log(this.diaglogVisible)
             },
-
+            getComment:function(index,row){
+                load.way = "查看评论";
+                load.goods_num = row.goods_num;
+                let sear_url = local+"sindex/?name={{name}}&id={{id}}&pwd={{pwd}}";
+                this.dialogVisible3 = true;
+                fetch(sear_url, {
+                        method: 'POST',
+                        mode:'cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                          },
+                        body:JSON.stringify(load)
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(responseJson) {
+                        temp=responseJson.data;
+                        evaTable.splice(0,evaTable.length);
+                        let i = 0;
+                        for(;i<temp.length;i++){
+                            evaTable.push(temp[i]);
+                            // console.log(temp[i]);
+                        }
+                    });
+            },
+            cancel3:function (){
+                this.dialogVisible3 = false;
+                // console.log(this.diaglogVisible)
+            },
      }
  });
 </script>

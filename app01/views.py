@@ -292,7 +292,12 @@ def mgood(request):
     elif request.method == 'POST':
         data = request.body
         data = json.loads(data)
+        way = data.get("way")
+        if way == '查看评论':
+            order_list = tls.index_goods_evaluation(data)
+            return JsonResponse({"data": order_list})
         tls.mgood_post(data)
+
         return render(request, "mgood.html")
 
 
