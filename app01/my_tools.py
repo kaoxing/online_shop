@@ -22,7 +22,6 @@ def shopper_exist(id, pwd):
     sql = "select * from shopper_table where shopper_num='{}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    print(id, pwd, rows)
     if len(rows) != 0 and rows[0][2] == pwd:
         return rows[0][1]
     return None
@@ -31,7 +30,6 @@ def shopper_exist(id, pwd):
 def shop_exist(id, pwd):
     # 商家登录,pwd = coder.decode(pwd,id)，返回None则不存在
     sql = "select * from shop_table where shop_num='{}'".format(id)
-    # print(sql)
     cursor.execute(sql)
     rows = cursor.fetchall()
     if len(rows) != 0 and rows[0][2] == pwd:
@@ -40,7 +38,6 @@ def shop_exist(id, pwd):
 
 
 def save_photo(photo,goods_num):
-    # print('photo',photo)
     if photo == '1' or photo is None:
         # 如果图片为空
         return "/static/img/default.jpg"
@@ -50,7 +47,6 @@ def save_photo(photo,goods_num):
         d = re.sub(r'data:image/png;base64,', "", c)
         d = re.sub(r'data:image/jpg;base64,', "", d)
         d = re.sub(r'data:image/jpeg;base64,', "", d)
-        # print(d)
         photo = base64.b64decode(d)
         # 处理图片地址
         filepath = os.path.join(BASE_DIR, 'app01/static/img/')
@@ -63,18 +59,13 @@ def save_photo(photo,goods_num):
             cursor.execute(sql)
             rows = cursor.fetchall()
             pic_path = rows[0][0]
-            print(pic_path)
             if pic_path != "/static/img/default.jpg":
                 # 如果不是默认图片
-                # tmp_path = 'app01' + pic_path
                 ret = pic_path
                 filepath = os.path.join(BASE_DIR, 'app01' + pic_path)
-                print(filepath)
         # 保存图片文件
         with open(filepath, 'wb') as f:
                 f.write(photo)
-        # print('ret:',ret)
-        # print('filepath:',filepath)
         return ret
 
 
@@ -166,9 +157,6 @@ def cart_post(data):
             sql = "update shopper_table set shopper_money = shopper_money - money({0}) where shopper_num = '{1}'".format(
                 total_money, shopper_num)
             cursor.execute(sql)  
-            # 商家钱包更新（确认收货时更新）
-            # sql = "update shop_table set shop_money = shop_money + money({0})".format(total_money)
-            # cursor.execute(sql)
             for i in data[1:]:
                 goods_num = i.get("goods_num")
                 # 查商品的购买数量
@@ -231,7 +219,6 @@ def index_goods_evaluation(data):
     cursor.execute(sql)
     table = []
     rows = cursor.fetchall()
-    print(rows)
     for row in rows:
         dic = {
             'shopper_name': row[0],
@@ -253,10 +240,11 @@ def mgood_get(id):
         dic = {
             "goods_num": row[1],
             "goods_name": row[2],
-            "inventory_number": row[6],
-            "goods_price": row[4],
             'goods_description': row[3],
-            'goods_photo': row[5]
+            "goods_price": row[4],
+            'goods_photo': row[5],
+            "inventory_number": row[6],
+            'inventory_sold':row[7]
         }
         list.append(dic)
     return list
@@ -264,7 +252,6 @@ def mgood_get(id):
 
 def mgood_post(data):
     ope = data.get('ope')
-    # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!',ope)
     if ope == '下架':
         goods_num = data.get('goods_num')
         sql = "update inventory_table set inventory_amount = -1 where goods_num = '{0}'".format(goods_num)
@@ -297,7 +284,6 @@ def mgood_post(data):
             else:
                 sql = "update goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= {2},goods_picture= '{3}' where goods_num = '{4}'".format(
                 name, description, price, picture, goods_num)
-            # print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!sql:',sql)
             cursor.execute(sql)
             sql = "update inventory_table set inventory_amount = {0} where goods_num = '{1}'".format(
                 amount, goods_num)
@@ -309,7 +295,6 @@ def shopper_find_money(id):
     sql = "select shopper_money from shopper_table where shopper_num='{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    print(sql, rows)
     if len(rows[0]) == 0:
         return 0
     money = rows[0][0]
@@ -324,7 +309,6 @@ def shopper_add_money(id, pwd, cMoney):
     # 用户充值
     sql = "UPDATE shopper_table set shopper_money = shopper_money + money({2}) " \
           "WHERE shopper_num = '{0}' AND shopper_password = '{1}';".format(id, pwd, cMoney)
-    print(sql)
     cursor.execute(sql)
 
 
@@ -340,7 +324,6 @@ def shop_find_money(id):
     sql = "select shop_money from shop_table where shop_num='{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    print(sql, rows)
     if len(rows[0]) == 0:
         return 0
     money = rows[0][0]
@@ -364,7 +347,6 @@ def shop_add_money(id, pwd, cMoney):
     # 商家充值
     sql = "UPDATE shop_table set shop_money = shop_money + money({2}) " \
           "WHERE shop_num = '{0}' AND shop_password = '{1}';".format(id, pwd, cMoney)
-    print(sql)
     cursor.execute(sql)
 
 
@@ -403,7 +385,6 @@ def shopper_order_get(id):
     cursor.execute(sql)
     rows = cursor.fetchall()
     order_list = []
-    # print(rows)
     for row in rows:
         dic = {
             "shopper_num": row[0],
@@ -429,7 +410,6 @@ def shop_order_get(id):
     cursor.execute(sql)
     rows = cursor.fetchall()
     order_list = []
-    print(rows)
     for row in rows:
         dic = {
             "shop_num": row[0],
@@ -451,7 +431,6 @@ def shop_order_get(id):
 
 def shopper_comment(data):
     # 用户评论
-    print("comment")
     comment = data.get("commentInfo")
     goods_num = data.get("goods_num")
     order_num = data.get("order_num")
@@ -465,7 +444,6 @@ def timestamp_to_time(timestamp):
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
 def shopper_refund(data):
-    print(data)
     order_num = data.get("order_num")
     goods_num = data.get("goods_num")
     # 用户订单查询
@@ -476,7 +454,6 @@ def shopper_refund(data):
     content_number = rows[0][1]
     goods_price = to_money(rows[0][2])
     total_money = content_number*goods_price
-    # print(shopper_num,content_number,goods_price,total_money)
     # 用户钱包更新
     sql = "update shopper_table set shopper_money = shopper_money + money({0}) where shopper_num = '{1}'".format(
         total_money, shopper_num)
@@ -503,7 +480,6 @@ def shopper_receive(data):
     if len(rows[0]) == 0:
         return
     money = to_money(rows[0][2]) * int(rows[0][1])
-    print(money)
     sql = "update shop_table set shop_money = shop_money + money({0}) where shop_num = '{1}'".format(money, rows[0][0])
     cursor.execute(sql)
 

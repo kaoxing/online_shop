@@ -7,7 +7,6 @@ from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 
 current_directory = os.path.dirname(os.path.abspath(__file__))
-# print(current_directory)
 sys.path.append(current_directory)
 
 import coder
@@ -30,7 +29,6 @@ def login(request):
     name = tls.shopper_exist(id, pwd)
     if name is not None:
         pwd = coder.encode(pwd, id)
-        print(pwd)
         return redirect(local + "index/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
     return render(request, "login.html")
     # TODO 这里加一个用户名/密码错误弹窗
@@ -40,7 +38,6 @@ def index(request):
     '''用户主页'''
     if request.method == 'GET':
         data = request.GET
-        print(data)
         id = data.get('id')
         if id is None:
             return redirect(local + "login/")
@@ -71,7 +68,6 @@ def wallet(request):
         pwd = data.get('pwd')
         #此处查询用户余额
         money = "{0}".format(tls.shopper_find_money(id))
-        # print(money, tls.shopper_find_money(id))
 
         return render(request, "wallet.html", {'name': name, 'id': id, 'pwd': pwd, 'money': money})
     data = json.loads(request.body)
@@ -80,9 +76,7 @@ def wallet(request):
     pwd = pwd.replace(" ", "+")
     name = data.get("name")
     cMoney = data.get("cMoney")
-    print("pwd", pwd)
     m = data.get("m")
-    print("here")
     #此处通过cMoney改余额,若m==“add"则充值，否则提现
     if m == "add":
         tls.shopper_add_money(id, coder.decode(pwd, id), cMoney)
@@ -104,9 +98,6 @@ def order(request):
     data = request.body
     data = json.loads(data)
     ope = data.get("ope")
-    # print(data)
-    # print(ope)
-    # print(ope == "评论")
     if ope == "评论":
         tls.shopper_comment(data)
     elif ope == "退货":
@@ -128,7 +119,6 @@ def car(request):
     data = request.body
     data = json.loads(data)
     result = tls.cart_post(data)
-    # print(result)
     if result == "用户余额不足":
         return JsonResponse({"data": result, "res": "余额不足"})
     elif result[-4:] == "库存不足":
@@ -149,10 +139,6 @@ def sorder(request):
     data = json.loads(data)
     ope = data.get("ope")
     # 通过ope的值确定操作类型,"发货","取消"
-    # goods_num = data.get('goods_num')
-    # order_num = data.get('order_num')
-    # order_statu = data.get('statu')
-    # print(goods_num, order_num, order_statu, ope)
     if ope == "发货":
         tls.shop_send_order(data)
     elif ope == "取消":
@@ -180,7 +166,6 @@ def sindex(request):
     '''商家主页'''
     if request.method == 'GET':
         data = request.GET
-        print(data)
         id = data.get('id')
         if id is None:
             return redirect(local + "slogin/")
@@ -206,7 +191,6 @@ def swallet(request):
         pwd = data.get('pwd')
         # 此处查询商家余额
         money = "{0}".format(tls.shop_find_money(id))
-        # print(money, tls.shopper_find_money(id))
         return render(request, "swallet.html", {'name': name, 'id': id, 'pwd': pwd, 'money': money})
     data = json.loads(request.body)
     id = data.get("id")
@@ -214,9 +198,7 @@ def swallet(request):
     pwd = pwd.replace(" ", "+")
     name = data.get("name")
     cMoney = data.get("cMoney")
-    # print("pwd", pwd)
     m = data.get("m")
-    # print("here")
     # 此处通过cMoney改余额,若m==“add"则充值，否则提现
     if m == "add":
         tls.shop_add_money(id, coder.decode(pwd, id), cMoney)
@@ -243,7 +225,6 @@ def setting(request):
     rPwd = data.get('resultPwd')
     tls.shopper_change_info(id, rName, sPwd, rPwd)
     # todo 在数据库中查询并修改
-    # print(data)
     # todo 若修改成功
     rPwd = coder.encode(rPwd, id)
     url = local + "setting/" + "?id=" + id + "&name=" + rName + "&pwd=" + rPwd
@@ -267,11 +248,7 @@ def ssetting(request):
     sPwd = data.get('sourcePwd')
     rPwd = data.get('resultPwd')
     rDes = data.get('description')
-    # todo 在数据库中查询并修改
-    # print(data)
     tls.shop_change_info(id, rName, sPwd, rPwd, rDes)
-    # todo 若修改成功
-
     rPwd = coder.encode(rPwd, id)
     url = local + "ssetting/" + "?id=" + id + "&name=" + rName + "&pwd=" + rPwd
     return redirect(url)
@@ -305,10 +282,8 @@ def test(request):
     if request.method == 'GET':
         return render(request, "mainpage.html")
     data = json.loads(request.body)
-    print(data)
     user = data.get("user")
     pwd = data.get("pwd")
-    # print("here")
     # if tls.user_exist(user, pwd):
     #     return redirect("https://www.baidu.com/")
     return render(request, "mainpage.html")
