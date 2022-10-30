@@ -306,7 +306,7 @@ def shopper_find_money(id):
     sql = "select shopper_money from shopper_table where shopper_num='{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    if len(rows[0]) == 0:
+    if len(rows) == 0:
         return 0
     money = rows[0][0]
     money = money.replace(",", '')
@@ -338,7 +338,7 @@ def shop_find_money(id):
     sql = "select shop_money from shop_table where shop_num='{0}'".format(id)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    if len(rows[0]) == 0:
+    if len(rows) == 0:
         return 0
     money = rows[0][0]
     money = money.replace(",", '')
@@ -376,16 +376,36 @@ def shop_sub_money(id, pwd, cMoney):
 def shopper_change_info(id, rName, sPwd, rPwd):
     # 用户账号信息修改
     cursor = connection.cursor()
-    sql = "UPDATE shopper_table set shopper_name = '{0}',shopper_password = '{1}' " \
-          "WHERE shopper_num = '{2}' AND shopper_password = '{3}';".format(rName, rPwd, id, sPwd)
+    sql = "UPDATE shopper_table set shopper_name = '{0}'" \
+          "WHERE shopper_num = '{1}';".format(rName, id)
     cursor.execute(sql)
+    sql = "select * from shopper_table where shopper_num = '{0}' and shopper_password = '{1}'".format(id, sPwd)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    if len(rows) == 0 or len(rPwd)>12 or len(rPwd)<6:
+        return False
+    sql = "UPDATE shopper_table set shopper_password = '{0}' " \
+          "WHERE shopper_num = '{1}' AND shopper_password = '{2}';".format(rPwd, id, sPwd)
+    cursor.execute(sql)
+    return True
 
 
 def shop_change_info(id, rName, sPwd, rPwd, rDes):
     # 用户账号信息修改
     cursor = connection.cursor()
-    sql = "UPDATE shop_table set shop_name = '{0}',shop_password = '{1}',shop_description = '{4}' " \
-          "WHERE shop_num = '{2}' AND shop_password = '{3}';".format(rName, rPwd, id, sPwd, rDes)
+    sql = "UPDATE shopper_table set shop_name = '{0}',shop_description = '{2}'" \
+          "WHERE shop_num = '{1}';".format(rName, id, rDes)
+    cursor.execute(sql)
+    sql = "select * from shop_table where shop_num = '{0}' and shop_password = '{1}'".format(id, sPwd)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    if len(rows) == 0 or len(rPwd) > 12 or len(rPwd) < 6:
+        return False
+    sql = "UPDATE shop_table set shop_password = '{0}' " \
+          "WHERE shop_num = '{1}' AND shop_password = '{2}';".format(rPwd, id, sPwd)
+    cursor.execute(sql)
+    return True
+
     cursor.execute(sql)
 
 

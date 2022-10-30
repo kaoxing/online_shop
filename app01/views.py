@@ -36,7 +36,7 @@ def login(request):
     name = tls.shopper_exist(id, pwd)
     user_data.extend([id, pwd, name, False])
     if name is not None:
-        pwd = coder.encode(pwd, id)
+        user_data[1] = coder.encode(pwd, id)
         user_data[3] = True
     print(user_data)
     return JsonResponse({"data": user_data})
@@ -167,7 +167,7 @@ def slogin(request):
     name = tls.shop_exist(id, pwd)
     user_data.extend([id, pwd, name, False])
     if name is not None:
-        pwd = coder.encode(pwd, id)
+        user_data[1] = coder.encode(pwd, id)
         user_data[3] = True
     print(user_data)
     return JsonResponse({"data": user_data})
@@ -235,13 +235,14 @@ def setting(request):
     rName = data.get('resultName')
     sPwd = data.get('sourcePwd')
     rPwd = data.get('resultPwd')
-    tls.shopper_change_info(id, rName, sPwd, rPwd)
-    # todo 在数据库中查询并修改
-    # todo 若修改成功
-    rPwd = coder.encode(rPwd, id)
-    url = local + "setting/" + "?id=" + id + "&name=" + rName + "&pwd=" + rPwd
-    return redirect(url)
-
+    ans = [tls.shopper_change_info(id, rName, sPwd, rPwd), rName]
+    if ans[0]:
+        pwd = coder.encode(rPwd, id)
+        ans.append(pwd)
+        return JsonResponse({"data": ans})
+    pwd = coder.encode(rPwd, id)
+    ans.append(pwd)
+    return JsonResponse({"data": ans})
 
 def ssetting(request):
     '''商家设置'''
@@ -260,10 +261,14 @@ def ssetting(request):
     sPwd = data.get('sourcePwd')
     rPwd = data.get('resultPwd')
     rDes = data.get('description')
-    tls.shop_change_info(id, rName, sPwd, rPwd, rDes)
-    rPwd = coder.encode(rPwd, id)
-    url = local + "ssetting/" + "?id=" + id + "&name=" + rName + "&pwd=" + rPwd
-    return redirect(url)
+    ans = [tls.shop_change_info(id, rName, sPwd, rPwd, rDes), rName]
+    if ans[0]:
+        pwd = coder.encode(rPwd, id)
+        ans.append(pwd)
+        return JsonResponse({"data": ans})
+    pwd = coder.encode(rPwd, id)
+    ans.append(pwd)
+    return JsonResponse({"data": ans})
 
 
 def mgood(request):

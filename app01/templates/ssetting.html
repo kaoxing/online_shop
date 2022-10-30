@@ -63,10 +63,6 @@
         },
         methods: {
             reSet: function () {
-                if(this.resultPwd.length<6||this.resultPwd.length>12){
-                    alert("密码过短或过长");
-                    return;
-                }
                 load.resultName = this.name;
                 load.sourcePwd = this.sourcePwd;
                 load.resultPwd = this.resultPwd;
@@ -79,15 +75,18 @@
                     },
                     body: JSON.stringify(load)
                 }).then(function(response) {
-                    // console.log(response)
-                    // 如果修改失败
-                    // alert("源密码错误")
-                    // 如果成功修改
-                    // let url = 'http://localhost:8000/setting/?name='+this.name+'&id={{id}}'+'&pwd='+this.resultPwd;
-                    window.location.replace(response.url)
-                }).catch(function(err) {
-                    // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
-                });;
+                        return response.json();
+                }).then(function(responseJson) {
+                    data = responseJson.data;
+                    console.log(data)
+                    url =local + "ssetting/" + "?id=" + '{{id}}' + "&name=" + data[1] + "&pwd=" + data[2];
+                    if(data[0]){
+                        window.location.replace(url)
+                    }else{
+                        alert("密码错误或长度有误，密码修改失败\n注意：5<len(password)<13")
+                        window.location.replace(url)
+                    }
+                });
             },
             goIndex:function(){
                 let index_url = local+'sindex/?name={{name}}&id={{id}}&pwd={{pwd}}';
