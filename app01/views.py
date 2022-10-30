@@ -34,9 +34,10 @@ def login(request):
     id = data.get("user")
     pwd = data.get("pwd")
     name = tls.shopper_exist(id, pwd)
+    user_data.extend([id, pwd, name, False])
     if name is not None:
         pwd = coder.encode(pwd, id)
-    user_data.extend([id, pwd, name, True])
+        user_data[3] = True
     print(user_data)
     return JsonResponse({"data": user_data})
     # TODO 这里加一个用户名/密码错误弹窗
@@ -164,9 +165,10 @@ def slogin(request):
     id = data.get("user")
     pwd = data.get("pwd")
     name = tls.shop_exist(id, pwd)
+    user_data.extend([id, pwd, name, False])
     if name is not None:
         pwd = coder.encode(pwd, id)
-    user_data.extend([id, pwd, name, True])
+        user_data[3] = True
     print(user_data)
     return JsonResponse({"data": user_data})
     # todo 这里加一个用户名/密码错误弹窗
