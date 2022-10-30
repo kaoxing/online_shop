@@ -1,66 +1,153 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="zxx">
-
+<html lang="en">
 <head>
-    <title>登录</title>
-    <!-- Meta tag Keywords -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8" />
-    <meta name="keywords"
-        content="Hotair Login Form Responsive web template, Bootstrap Web Templates, Flat Web Templates, Android Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyEricsson, Motorola web design" />
-    <!-- //Meta tag Keywords -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <!--/Style-CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css" media="all" />
-    <!--//Style-CSS -->
+    <meta charset="UTF-8">
+    <title>用户登录</title>
 
-    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css'%}" type="text/css" media="all">
-
+<!--引入js-->
+<script src="{% static '/js/vue.js'%}"></script>
+<script src="{% static '/js/element-ui/lib/index.js'%}"></script>
+<link rel="stylesheet" href="{% static '/js/element-ui/lib/theme-chalk/index.css'%}">
+<style>
+</style>
 </head>
-
 <body>
+<div id="app">
 
-    <!-- form section start -->
-    <section class="w3l-hotair-form">
-        <h1>商城购物系统</h1>
-        <div class="container">
-            <!-- /form -->
-            <div class="workinghny-form-grid">
-                <div class="main-hotair">
-                    <div class="alert-close">
-                        <span class="fa fa-close"></span>
+    <el-container>
+        <el-header>电商购物系统</el-header>
+        <!--主体内容-->
+        <el-main>
+
+
+            <el-row>
+                <el-col :span="8" :offset="8">
+                    <div id="loginBox">
+                        用户登录<br>
+                        账号：<el-input v-model="user" placeholder="账号"></el-input><br>
+                        密码：<el-input type="password" v-model="pwd" placeholder="密码"></el-input><br>
+                        <el-button type="primary" @click="y_reset">重置</el-button>
+                        <el-button type="primary" @click="y_login">登录</el-button>
+                        <el-button type="danger" @click="goHome">返回</el-button>
                     </div>
+                </el-col>
+            </el-row>
 
-                    <div class="content-wthree">
 
-                        <h2>登录</h2>
-                        <form action="#" method="post">
-                            {%csrf_token%}
-                            <input type="text" class="text" name="user" placeholder="账号" required="">
-                            <input type="password" class="password" name="pwd" placeholder="密码" required="">
-                            <button class="btn" type="submit">Log In</button>
-                        </form>
-                    </div>
-                    <div class="w3l_form align-self">
-                        <div class="left_grid_info">
+        </el-main>
+    </el-container>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- //form -->
-        </div>
-    </section>
-    <!-- //form section start -->
 
-{% if messages %}
-<script>
-    {% for msg in messages %}
-        alert("{{ msg.message }}");
-    {% endfor %}
-</script>
-{% endif %}
+
+</div>
+
+
+
 </body>
-
 </html>
+
+<style>
+    /*整体样式*/
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    body,html,.el-container,#app{
+        height: 100%;
+        background-image:url("{% static 'images/background_login.jpg'%}");
+    }
+
+    /*放账号密码input的div*/
+    #loginBox{
+        background-color: #eee;
+        border-radius: 15px;
+        margin-top: 15%;
+    }
+
+    /*布局容器样式 main header fotter*/
+    .el-header {
+        background-color:deepskyblue;
+        color: #fff;
+        text-align: center;
+        line-height: 60px;
+        font-size: xx-large;
+        font-weight: bolder;
+
+    }
+    .el-footer{
+        background-color: #bbb;
+        color: #000;
+        text-align: center;
+        line-height: 60px;
+
+    }
+    .el-main {
+        text-align: center;
+        line-height: 80px;
+
+    }
+
+/*    输入框样式*/
+    .el-input{
+        width: 50%;
+    }
+
+</style>
+
+<script>
+    const local="http://localhost:8000/";
+    let load={
+        user:"",
+        pwd:""
+    }
+    let app=new Vue({
+    el:"#app",
+    data:{
+        user:"",
+        pwd:"",
+    },
+    methods:{
+        y_reset(){//重置
+            this.user="";this.pwd="";
+        },
+        y_login(){//点击登录按钮后发送ajax请求给后端进行账号密码比对
+            load.user=this.user;
+            load.pwd=this.pwd;
+
+            let login_index=local+"login/"
+            fetch(login_index, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(load)
+                }).then(function(response) {
+                        return response.json();
+                }).then(function(responseJson) {
+                    data = responseJson.data;
+                    console.log(data)
+                    if(data[3]){
+                        url =local + "index/" + "?id=" + data[0] + "&name=" + data[2] + "&pwd=" + data[1];
+                        window.location.replace(url)
+                    }else{
+                        alert("账号或密码错误")
+                    }
+                });
+        },
+        goHome:function(){
+                let home_url = local+'Home/';
+                fetch(home_url, {
+                        method: 'GET',
+                    }).then(function(response) {
+                        // console.log(response)
+                        window.location.replace(home_url)
+                    }).catch(function(err) {
+                        // 出错了;等价于 then 的第二个参数,但这样更好用更直观 :(
+                    });
+            },
+    }
+    });
+
+</script>

@@ -6,6 +6,7 @@ import requests
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 from django.contrib import messages
+
 current_directory = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_directory)
 
@@ -22,20 +23,22 @@ local = "http://127.0.0.1:8000/"
 def home(request):
     return render(request, "Home.html")
 
+
 def login(request):
     '''用户登录'''
     if request.method == 'GET':
         return render(request, "login.html")
     # 获取接收到的账号和密码
-    data = request.POST
+    data = json.loads(request.body)
+    user_data = []
     id = data.get("user")
     pwd = data.get("pwd")
     name = tls.shopper_exist(id, pwd)
     if name is not None:
         pwd = coder.encode(pwd, id)
-        return redirect(local + "index/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
-    messages.success(request, "账号或密码错误")
-    return redirect(local + "login/")
+    user_data.extend([id, pwd, name, True])
+    print(user_data)
+    return JsonResponse({"data": user_data})
     # TODO 这里加一个用户名/密码错误弹窗
 
 
@@ -71,7 +74,7 @@ def wallet(request):
         id = data.get('id')
         name = data.get('name')
         pwd = data.get('pwd')
-        #此处查询用户余额
+        # 此处查询用户余额
         money = "{0}".format(tls.shopper_find_money(id))
 
         return render(request, "wallet.html", {'name': name, 'id': id, 'pwd': pwd, 'money': money})
@@ -82,7 +85,7 @@ def wallet(request):
     name = data.get("name")
     cMoney = data.get("cMoney")
     m = data.get("m")
-    #此处通过cMoney改余额,若m==“add"则充值，否则提现
+    # 此处通过cMoney改余额,若m==“add"则充值，否则提现
     if m == "add":
         tls.shopper_add_money(id, coder.decode(pwd, id), cMoney)
     else:
@@ -156,15 +159,16 @@ def slogin(request):
     if request.method == 'GET':
         return render(request, "slogin.html")
     # 获取接收到的账号和密码
-    data = request.POST
+    data = json.loads(request.body)
+    user_data = []
     id = data.get("user")
     pwd = data.get("pwd")
     name = tls.shop_exist(id, pwd)
     if name is not None:
         pwd = coder.encode(pwd, id)
-        return redirect(local + "sindex/" + "?id=" + id + "&name=" + name + "&pwd=" + pwd)
-    messages.success(request, "账号或密码错误")
-    return redirect(local + "slogin/")
+    user_data.extend([id, pwd, name, True])
+    print(user_data)
+    return JsonResponse({"data": user_data})
     # todo 这里加一个用户名/密码错误弹窗
 
 
