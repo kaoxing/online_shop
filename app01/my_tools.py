@@ -282,7 +282,7 @@ def mgood_post(data):
             sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description, price,
                                                                                         picture)
             cursor.execute(sql)
-            sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(shop_num, goods_num, amount, 0)
+            sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(goods_num, shop_num, amount, 0)
             cursor.execute(sql)
         elif ope == '修改':
             goods_num = data.get('goods_num')
