@@ -73,10 +73,11 @@
                 }).then(function(responseJson) {
                     data = responseJson.data;
                     console.log(data)
-                    url =local + "setting/" + "?id=" + '{{id}}' + "&name=" + data[1] + "&pwd=" + data[2];
                     if(data[0]){
+                        url =local + "setting/" + "?id=" + '{{id}}' + "&name=" + data[1] + "&pwd=" + data[2];
                         window.location.replace(url)
                     }else{
+                        url =local + "setting/" + "?id=" + '{{id}}' + "&name=" + data[1] + "&pwd=" + data[2];
                         alert("密码错误或长度有误，密码修改失败\n注意：5<len(password)<13")
                         window.location.replace(url)
                     }

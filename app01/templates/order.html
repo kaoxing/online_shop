@@ -199,6 +199,10 @@
                     });
             },
             setDialog:function(index,row){
+                if(row.statu != '已收货'){
+                    alert("只能评论已收货的商品");
+                    return;
+                }
                 this.dialogVisible = true;
                 i=index;j=row;
                 this.commentInfo = "";
@@ -211,6 +215,7 @@
                 let index = i, row = j;
                 this.dialogVisible = false;
                 if(row.statu == '已收货'){
+                    console.log(row.statu)
                     load.ope = "评论";
                     load.goods_num = row.goods_num;
                     load.order_num = row.order_num;

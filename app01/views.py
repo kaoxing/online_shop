@@ -236,13 +236,15 @@ def setting(request):
     sPwd = data.get('sourcePwd')
     rPwd = data.get('resultPwd')
     ans = [tls.shopper_change_info(id, rName, sPwd, rPwd), rName]
+    pwd = tls.setting_get_shopper_pwd(id)
     if ans[0]:
-        pwd = coder.encode(rPwd, id)
+        pwd = coder.encode(pwd, id)
         ans.append(pwd)
         return JsonResponse({"data": ans})
-    pwd = coder.encode(rPwd, id)
+    pwd = coder.encode(pwd, id)
     ans.append(pwd)
     return JsonResponse({"data": ans})
+
 
 def ssetting(request):
     '''商家设置'''
@@ -264,11 +266,12 @@ def ssetting(request):
     rPwd = data.get('resultPwd')
     rDes = data.get('description')
     ans = [tls.shop_change_info(id, rName, sPwd, rPwd, rDes), rName]
+    pwd = tls.ssetting_get_shop_pwd(id)
     if ans[0]:
-        pwd = coder.encode(rPwd, id)
+        pwd = coder.encode(pwd, id)
         ans.append(pwd)
         return JsonResponse({"data": ans})
-    pwd = coder.encode(rPwd, id)
+    pwd = coder.encode(pwd, id)
     ans.append(pwd)
     return JsonResponse({"data": ans})
 

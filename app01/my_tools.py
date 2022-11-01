@@ -572,3 +572,19 @@ def shop_cancel_order(data):
     sql = "update inventory_table set inventory_amount = inventory_amount + {0},inventory_sold = inventory_sold - {0} " \
           "where goods_num = '{1}'".format(rows[0][1], goods_num)
     cursor.execute(sql)
+
+
+def setting_get_shopper_pwd(id):
+    cursor = connection.cursor()
+    sql = "select shopper_password from shopper_table where shopper_num = '{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    return rows[0][0]
+
+def ssetting_get_shop_pwd(id):
+    cursor = connection.cursor()
+    sql = "select shop_password from shop_table where shop_num = '{0}'".format(id)
+    cursor.execute(sql)
+    rows = cursor.fetchall()
+    return rows[0][0]
+
