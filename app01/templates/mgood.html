@@ -75,16 +75,16 @@
     :show-close="show1">
     <el-form ref="form" label-width="80px">
   <el-form-item label="商品名称">
-    <el-input maxlength=10 type="text" v-model="Gname"></el-input>
+    <el-input maxlength="10" type="text" v-model="Gname"></el-input>
   </el-form-item>
     <el-form-item label="商品价格">
-    <el-input maxlength=10 type="number" v-model="Gprice"></el-input>
+    <el-input oninput="if(value.length > 6) value = value.slice(0,8)" type="number" v-model="Gprice"></el-input>
   </el-form-item>
     <el-form-item label="库存数量">
-    <el-input maxlength=10 type="number" v-model="Gnumber"></el-input>
+    <el-input oninput="if(value.length > 6) value = value.slice(0,8)" type="number" v-model="Gnumber"></el-input>
   </el-form-item>
     <el-form-item label="商品描述">
-    <el-input maxlength=100 type="textarea" v-model="Gdes"></el-input>
+    <el-input maxlength="100" type="textarea" v-model="Gdes"></el-input>
   </el-form-item>
     <el-form-item label="商品照片">
     <input type="file" id="photo" accept="image/png, image/jpeg, image/jpg" @change="preview(this)">
@@ -182,6 +182,7 @@
             dialogVisible3: false,
             number:"",
             add:"",
+            show:true,
             show1:false,
             show2:false,
             n:0,

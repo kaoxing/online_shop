@@ -15,8 +15,6 @@ import time
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-
-
 def shopper_exist(id, pwd):
     # 用户登录，pwd = coder.decode(pwd,id)，返回为None则不存在
     cursor = connection.cursor()
@@ -39,7 +37,7 @@ def shop_exist(id, pwd):
     return None
 
 
-def save_photo(photo,goods_num):
+def save_photo(photo, goods_num):
     cursor = connection.cursor()
     if photo == '1' or photo is None:
         # 如果图片为空
@@ -68,7 +66,7 @@ def save_photo(photo,goods_num):
                 filepath = os.path.join(BASE_DIR, 'app01' + pic_path)
         # 保存图片文件
         with open(filepath, 'wb') as f:
-                f.write(photo)
+            f.write(photo)
         return ret
 
 
@@ -121,7 +119,7 @@ def cart_post(data):
         shopper_num = data[0][0]
         # 查用户钱包
         sql = "select shopper_money from shopper_table where shopper_num = '{0}'".format(shopper_num)
-        cursor.execute(sql)  
+        cursor.execute(sql)
         result = cursor.fetchall()
         shopper_money = to_money(result[0][0])
         # 购买验证
@@ -131,14 +129,14 @@ def cart_post(data):
             goods_num = i.get("goods_num")
             # 查商品的价格和购买数量
             sql = "select goods_price,cart_number from cart_view where goods_num = '{0}'".format(goods_num)
-            cursor.execute(sql)  
+            cursor.execute(sql)
             result = cursor.fetchall()
             goods_price = to_money(result[0][0])
             content_number = result[0][1]
             # 查商品的库存量
             sql = "select inventory_amount from inventory_table where goods_num = '{0}'".format(goods_num)
-            cursor.execute(sql)  
-            result= cursor.fetchall()
+            cursor.execute(sql)
+            result = cursor.fetchall()
             inventory_amount = result[0][0]
             # 判断库存是否充足
             if inventory_amount < content_number:
@@ -157,27 +155,31 @@ def cart_post(data):
             # 向订单表插入订单信息
             order_num = 'order' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成订单号
             order_address = data[0][1]
-            sql = "insert into order_table values('{0}',now()+'8:00','{1}','{2}')".format(order_num, shopper_num,order_address)
-            cursor.execute(sql)  
+            sql = "insert into order_table values('{0}',now()+'8:00','{1}','{2}')".format(order_num, shopper_num,
+                                                                                          order_address)
+            cursor.execute(sql)
             # 用户钱包更新
             sql = "update shopper_table set shopper_money = shopper_money - money({0}) where shopper_num = '{1}'".format(
                 total_money, shopper_num)
-            cursor.execute(sql)  
+            cursor.execute(sql)
             for i in data[1:]:
                 goods_num = i.get("goods_num")
                 # 查商品的购买数量
                 sql = "select cart_number from cart_view where goods_num = '{0}'".format(goods_num)
-                cursor.execute(sql)  
+                cursor.execute(sql)
                 result = cursor.fetchall()
                 cart_number = result[0][0]
                 # 向包含表里插入订单包含信息
-                sql = "insert into content_table values('{0}','{1}',{2},'待发货')".format(order_num, goods_num,cart_number)
+                sql = "insert into content_table values('{0}','{1}',{2},'待发货')".format(order_num, goods_num,
+                                                                                          cart_number)
                 cursor.execute(sql)
                 # 删购物车表中对应元组
-                sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+                sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
+                                                                                                      goods_num)
                 cursor.execute(sql)
                 # 更新商家的库存表
-                sql = "update inventory_table set inventory_amount = inventory_amount - {0},inventory_sold = inventory_sold + {0} where goods_num = '{1}'".format(cart_number,goods_num)
+                sql = "update inventory_table set inventory_amount = inventory_amount - {0},inventory_sold = inventory_sold + {0} where goods_num = '{1}'".format(
+                    cart_number, goods_num)
                 cursor.execute(sql)
             return "下单成功"
     else:
@@ -190,7 +192,8 @@ def cart_post(data):
             sql = "update cart_table set cart_number = {0} where shopper_num = '{1}' and goods_num = '{2}'".format(
                 goods_number, shopper_num, goods_num)
         elif ope == '删除':
-            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,goods_num)
+            sql = "delete from cart_table where shopper_num = '{0}' and goods_num = '{1}'".format(shopper_num,
+                                                                                                  goods_num)
         cursor.execute(sql)
 
 
@@ -253,7 +256,7 @@ def mgood_get(id):
             "goods_price": row[4],
             'goods_photo': row[5],
             "inventory_number": row[6],
-            'inventory_sold':row[7]
+            'inventory_sold': row[7]
         }
         list.append(dic)
     return list
@@ -273,27 +276,29 @@ def mgood_post(data):
     else:
         name = data.get("goods_name")
         description = data.get("goods_description")
+        # description = description.replace("\n", '')
         price = data.get("goods_price")
         amount = data.get("goods_number")
         shop_num = data.get("id")
         if ope == '上架':
             goods_num = 'goods' + ''.join([random.choice('0123456789') for i in range(5)])  # 随机生成商品号
-            picture = save_photo(data.get('goods_photo'),None)
-            sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description, price,
+            picture = save_photo(data.get('goods_photo'), None)
+            sql = "insert into goods_table values ('{0}','{1}','{2}',{3},'{4}')".format(goods_num, name, description,
+                                                                                        price,
                                                                                         picture)
             cursor.execute(sql)
             sql = "insert into inventory_table values('{0}','{1}',{2},{3})".format(shop_num, goods_num, amount, 0)
             cursor.execute(sql)
         elif ope == '修改':
             goods_num = data.get('goods_num')
-            picture = save_photo(data.get('goods_photo'),goods_num)
+            picture = save_photo(data.get('goods_photo'), goods_num)
             sql = ""
             if picture == "/static/img/default.jpg":
                 sql = "update goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= {2} where goods_num = '{3}'".format(
-                name, description, price, goods_num)
+                    name, description, price, goods_num)
             else:
                 sql = "update goods_table set goods_name = '{0}',goods_description = '{1}',goods_price= {2},goods_picture= '{3}' where goods_num = '{4}'".format(
-                name, description, price, picture, goods_num)
+                    name, description, price, picture, goods_num)
             cursor.execute(sql)
             sql = "update inventory_table set inventory_amount = {0} where goods_num = '{1}'".format(
                 amount, goods_num)
@@ -379,10 +384,12 @@ def shopper_change_info(id, rName, sPwd, rPwd):
     sql = "UPDATE shopper_table set shopper_name = '{0}'" \
           "WHERE shopper_num = '{1}';".format(rName, id)
     cursor.execute(sql)
+    if len(rPwd) == 0:
+        return True
     sql = "select * from shopper_table where shopper_num = '{0}' and shopper_password = '{1}'".format(id, sPwd)
     cursor.execute(sql)
     rows = cursor.fetchall()
-    if len(rows) == 0 or len(rPwd)>12 or len(rPwd)<6:
+    if len(rows) == 0 or len(rPwd) > 12 or len(rPwd) < 6:
         return False
     sql = "UPDATE shopper_table set shopper_password = '{0}' " \
           "WHERE shopper_num = '{1}' AND shopper_password = '{2}';".format(rPwd, id, sPwd)
@@ -393,9 +400,11 @@ def shopper_change_info(id, rName, sPwd, rPwd):
 def shop_change_info(id, rName, sPwd, rPwd, rDes):
     # 用户账号信息修改
     cursor = connection.cursor()
-    sql = "UPDATE shopper_table set shop_name = '{0}',shop_description = '{2}'" \
+    sql = "UPDATE shop_table set shop_name = '{0}',shop_description = '{2}'" \
           "WHERE shop_num = '{1}';".format(rName, id, rDes)
     cursor.execute(sql)
+    if len(rPwd) == 0:
+        return True
     sql = "select * from shop_table where shop_num = '{0}' and shop_password = '{1}'".format(id, sPwd)
     cursor.execute(sql)
     rows = cursor.fetchall()
@@ -485,27 +494,31 @@ def shopper_comment(data):
 def timestamp_to_time(timestamp):
     return timestamp.strftime("%Y-%m-%d %H:%M:%S")
 
+
 def shopper_refund(data):
     cursor = connection.cursor()
     order_num = data.get("order_num")
     goods_num = data.get("goods_num")
     # 用户订单查询
-    sql = "select shopper_num,content_number,goods_price from shopper_order_view where order_num = '{0}' and goods_num = '{1}'".format(order_num,goods_num)
+    sql = "select shopper_num,content_number,goods_price from shopper_order_view where order_num = '{0}' and goods_num = '{1}'".format(
+        order_num, goods_num)
     cursor.execute(sql)
     rows = cursor.fetchall()
     shopper_num = rows[0][0]
     content_number = rows[0][1]
     goods_price = to_money(rows[0][2])
-    total_money = content_number*goods_price
+    total_money = content_number * goods_price
     # 用户钱包更新
     sql = "update shopper_table set shopper_money = shopper_money + money({0}) where shopper_num = '{1}'".format(
         total_money, shopper_num)
     cursor.execute(sql)
     # 更新包含表的订单包含信息
-    sql = "update content_table set content_status = '已退货' where order_num = '{0}' and goods_num = '{1}'".format(order_num, goods_num)
+    sql = "update content_table set content_status = '已退货' where order_num = '{0}' and goods_num = '{1}'".format(
+        order_num, goods_num)
     cursor.execute(sql)
     # 更新商家的库存表
-    sql = "update inventory_table set inventory_amount = inventory_amount + {0},inventory_sold = inventory_sold - {0} where goods_num = '{1}'".format(content_number,goods_num)
+    sql = "update inventory_table set inventory_amount = inventory_amount + {0},inventory_sold = inventory_sold - {0} where goods_num = '{1}'".format(
+        content_number, goods_num)
     cursor.execute(sql)
 
 
@@ -559,4 +572,3 @@ def shop_cancel_order(data):
     sql = "update inventory_table set inventory_amount = inventory_amount + {0},inventory_sold = inventory_sold - {0} " \
           "where goods_num = '{1}'".format(rows[0][1], goods_num)
     cursor.execute(sql)
-

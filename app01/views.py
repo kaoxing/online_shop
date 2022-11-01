@@ -253,6 +253,8 @@ def ssetting(request):
         pwd = data.get('pwd')
         # todo 这里要先确定数据库雀食有这个商家并获取商家描述
         description = tls.shop_get_des(id)
+        description = description.replace("\n", '')
+        print(description)
         return render(request, "ssetting.html", {'name': name, 'id': id, 'pwd': pwd, 'description': description})
     # 接收到修改请求
     data = json.loads(request.body)
