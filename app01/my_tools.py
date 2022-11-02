@@ -402,7 +402,7 @@ def shopper_change_info(id, rName, sPwd, rPwd):
 
 
 def shop_change_info(id, rName, sPwd, rPwd, rDes):
-    # 用户账号信息修改
+    # 商家账号信息修改
     cursor = connection.cursor()
     sql = "UPDATE shop_table set shop_name = '{0}',shop_description = '{2}'" \
           "WHERE shop_num = '{1}';".format(rName, id, rDes)
@@ -418,8 +418,6 @@ def shop_change_info(id, rName, sPwd, rPwd, rDes):
           "WHERE shop_num = '{1}' AND shop_password = '{2}';".format(rPwd, id, sPwd)
     cursor.execute(sql)
     return True
-
-    cursor.execute(sql)
 
 
 def shop_get_des(id):
