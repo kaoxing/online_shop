@@ -199,10 +199,14 @@ def cart_post(data):
 
 def index_search(info, way):
     cursor = connection.cursor()
-    if way == '1':
-        sql = "select * from goods_view where goods_name like '%{0}%' and inventory_amount <> -1".format(info)
-    elif way == '2':
-        sql = "select * from goods_view where shop_name like '%{0}%' and inventory_amount <> -1".format(info)
+    sql = ""
+    if info == "":
+        sql = "select * from goods_view where inventory_amount <> -1 order by inventory_sold desc limit 10"
+    else:
+        if way == '1':
+            sql = "select * from goods_view where goods_name like '%{0}%' and inventory_amount <> -1".format(info)
+        elif way == '2':
+            sql = "select * from goods_view where shop_name like '%{0}%' and inventory_amount <> -1".format(info)
     cursor.execute(sql)
     rows = cursor.fetchall()
     list = []
