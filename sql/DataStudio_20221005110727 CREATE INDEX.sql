@@ -1,1 +1,1 @@
-CREATE INDEX price_index ON goods_table(goods_price)
+CREATE INDEX sold_index ON inventory_table(inventory_sold);
