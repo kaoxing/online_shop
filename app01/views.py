@@ -25,7 +25,7 @@ def home(request):
 
 
 def login(request):
-    '''用户登录'''
+    """用户登录"""
     if request.method == 'GET':
         return render(request, "login.html")
     # 获取接收到的账号和密码
@@ -44,7 +44,7 @@ def login(request):
 
 
 def index(request):
-    '''用户主页'''
+    """用户主页"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -69,7 +69,7 @@ def index(request):
 
 
 def wallet(request):
-    '''用户钱包'''
+    """用户钱包"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -96,7 +96,7 @@ def wallet(request):
 
 
 def order(request):
-    '''用户订单'''
+    """用户订单"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -117,7 +117,7 @@ def order(request):
 
 
 def car(request):
-    '''用户购物车'''
+    """用户购物车"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -136,7 +136,7 @@ def car(request):
 
 
 def sorder(request):
-    '''商家订单'''
+    """商家订单"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -156,7 +156,7 @@ def sorder(request):
 
 
 def slogin(request):
-    '''商家登录'''
+    """商家登录"""
     if request.method == 'GET':
         return render(request, "slogin.html")
     # 获取接收到的账号和密码
@@ -175,7 +175,7 @@ def slogin(request):
 
 
 def sindex(request):
-    '''商家主页'''
+    """商家主页"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -195,7 +195,7 @@ def sindex(request):
 
 
 def swallet(request):
-    '''商家钱包'''
+    """商家钱包"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -221,7 +221,7 @@ def swallet(request):
 
 
 def setting(request):
-    '''用户设置'''
+    """用户设置"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -247,7 +247,7 @@ def setting(request):
 
 
 def ssetting(request):
-    '''商家设置'''
+    """商家设置"""
     if request.method == 'GET':
         data = request.GET
         id = data.get('id')
@@ -277,7 +277,7 @@ def ssetting(request):
 
 
 def mgood(request):
-    '''商品管理'''
+    """商品管理"""
     # TODO 这里的 “查看商品评论”按钮不会触发
     if request.method == 'GET':
         data = request.GET

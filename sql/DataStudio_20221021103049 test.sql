@@ -1,11 +1,3 @@
-INSERT INTO shopper_table VALUES('shopper123','脑瘫','123456',0);
-INSERT INTO shopper_table VALUES('shopper456','智障','123456',250);
-
-INSERT INTO shop_table VALUES('shop123456','是嘉心糖捏','123456','好想做嘉然小姐的狗啊',0);
-
-INSERT into goods_table VALUES('goods12345','向哲的牛牛','描述',10,'图片');
-INSERT into goods_table VALUES('goods12346','向哲的皮炎子','描述2',12,'图片2');
-
 INSERT INTO inventory_table VALUES('shop123456','goods12345',200,0);
 INSERT INTO inventory_table VALUES('shop123456','goods12346',198,20);
 
