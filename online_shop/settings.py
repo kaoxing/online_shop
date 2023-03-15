@@ -83,11 +83,11 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'shop',  # 数据库名
-        'USER': 'dboper',  # 用户名
-        'PASSWORD': 'dboper@12',  # 密码
-        'HOST': '124.70.12.6',  # ip
-        'PORT': 26000  # openGauss数据口的端口
+        'NAME': '',  # 数据库名
+        'USER': '',  # 用户名
+        'PASSWORD': '',  # 密码
+        'HOST': '',  # ip
+        'PORT':   # openGauss数据口的端口
     }
     # "default": {
     #     "ENGINE": "django.db.backends.sqlite3",
